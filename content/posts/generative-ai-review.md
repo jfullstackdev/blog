@@ -58,7 +58,7 @@ In the past, Microsoft Copilot, the one integrated with `bing.com`,
 provided three options for our answers : creative, balanced
 or accurate.
 
-<img width="717" height="314" alt="image" src="https://github.com/user-attachments/assets/f0f34c60-4346-4687-94a6-b3ce0a8fa6b1" />
+<img width="717" height="314" alt="image" src="https://github.com/user-attachments/assets/7977db62-e0fe-4959-856d-9414206bed2c" />
 
 This is because GenAI always works on patterns of data.
 
@@ -73,7 +73,7 @@ So we still do our own research particularly if this is critical info.
 As of this writing too, the ChatGPT on Web has this disclaimer : 
 "ChatGPT can make mistakes. Consider checking important information."
 
-<img width="732" height="484" alt="image" src="https://github.com/user-attachments/assets/35f8ba7f-8bf8-427c-b952-a42ec88d5ffc" />
+<img width="732" height="484" alt="image" src="https://github.com/user-attachments/assets/8bf5a212-7190-4dd0-b27b-6d6192056c95" />
 
 So humans still need to double check the reliability of data.
 
@@ -113,7 +113,7 @@ You can't get answers on sensitive or inappropriate topics. Even
 when you ask about such topics, it will respond in a way that
 reflects this limitation.
 
-<img width="714" height="355" alt="image" src="https://github.com/user-attachments/assets/dc53d5fc-5c7f-42e7-8959-11704a69ef64" />
+<img width="714" height="355" alt="image" src="https://github.com/user-attachments/assets/aa2f837f-face-402e-b3eb-945a8e499c3d" />
 
 ## Downtimes and Limits
 
