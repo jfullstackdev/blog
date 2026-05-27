@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Writing</title>
+  <meta name="description" content="Writing">
+  <meta property="og:title" content="Writing">
+  <meta property="og:description" content="Writing">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Writing">
+  <meta name="twitter:description" content="Writing">
+  <link rel="stylesheet" href="/blog-priv/style.css">
+  <link rel="stylesheet" href="/blog-priv/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+    <nav class="top-nav"><a href="/blog-priv/">Writing</a></nav>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <p>@jfullstackdev</p>
+          <p>Senior Dev, GitHub Contributor, Google & VEX Robotics Certified Educator, Tech Instructor, LPT</p>
+        </div>
+      </aside>
+      <main class="content">
+        
+        <div class="topic-row">
+          <a href="/blog-priv/topics/ai/" class="topic-chip">ai</a><a href="/blog-priv/topics/crypto/" class="topic-chip">crypto</a><a href="/blog-priv/topics/rdb/" class="topic-chip">rdb</a><a href="/blog-priv/topics/transactions/" class="topic-chip">transactions</a>
+        </div>
+        
+        <ul class="post-list">
+    <li>
+      <a href="/blog-priv/the-january-crypto-dump/">The January Crypto Dump</a>
+      <time>May 9, 2026</time>
+      <span>it's all fun and games until this January Crypto Dump happens and stretches on for months</span>
+    </li>
+  
+    <li>
+      <a href="/blog-priv/about-crypto/">Crypto, As I Learned It</a>
+      <time>December 27, 2025</time>
+      <span>all about my take on Cryptocurrency, from first encounters to trading, investing, and everything in between</span>
+    </li>
+  
+    <li>
+      <a href="/blog-priv/transaction-design-principles/">Transaction System Design Principles</a>
+      <time>December 14, 2025</time>
+      <span>let's discuss Transaction Design Principles ...</span>
+    </li>
+  
+    <li>
+      <a href="/blog-priv/rdb-table-types/">Relational Database Tables and Relationships</a>
+      <time>October 10, 2025</time>
+      <span>relational database + coding = a dev superpower, so I wrote about what I’ve learned along the way …</span>
+    </li>
+  
+    <li>
+      <a href="/blog-priv/ai-agents-step-far-beyond/">AI Agents: A Step Far Beyond</a>
+      <time>July 13, 2025</time>
+      <span>AI Agents Far Beyond : a whole new experience</span>
+    </li>
+  
+    <li>
+      <a href="/blog-priv/generative-ai-review/">My Thoughts On Generative AI</a>
+      <time>October 20, 2024</time>
+      <span>to Gen AI or not to Gen AI ? is it a threat to human jobs, or just hype ? read this</span>
+    </li>
+  </ul>
+        
+      </main>
+    </div>
+  
+</body>
+</html>

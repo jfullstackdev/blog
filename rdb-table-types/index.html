@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relational Database Tables and Relationships</title>
+  <meta name="description" content="relational database + coding = a dev superpower, so I wrote about what I’ve learned along the way …">
+  <meta property="og:title" content="Relational Database Tables and Relationships">
+  <meta property="og:description" content="relational database + coding = a dev superpower, so I wrote about what I’ve learned along the way …">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Relational Database Tables and Relationships">
+  <meta name="twitter:description" content="relational database + coding = a dev superpower, so I wrote about what I’ve learned along the way …">
+  <link rel="stylesheet" href="/blog-priv/style.css">
+  <link rel="stylesheet" href="/blog-priv/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+    <nav class="top-nav"><a href="/blog-priv/" id="back-link">← Back</a></nav>
+    <script>
+      (function() {
+        var a = document.getElementById('back-link');
+        a.addEventListener('click', function(e) {
+          if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+          if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            e.preventDefault();
+            history.back();
+          }
+        });
+      })();
+    </script>
+    <div class="layout">
+      <aside class="toc">
+        <details class="toc-mobile">
+          <summary>Contents</summary>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#relational-database-table-types">Relational Database Table Types</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#1-regular-tables-entity-tables">1. Regular Tables (Entity Tables)</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#2-pivot-bridge-tables-mn-relationships">2. Pivot / Bridge Tables (M:N Relationships)</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#3-lookup-reference-tables-1n-n1-relationships">3. Lookup / Reference Tables (1:N / N:1 Relationships)</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#4-audit-history-tables">4. Audit / History Tables</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#5-aggregate-summary-tables">5. Aggregate / Summary Tables</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#6-configurationsettings-tables">6. Configuration/Settings Tables</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#7-hierarchicaltree-tables-self-referencing">7. Hierarchical/Tree Tables (Self-Referencing)</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#8-temporarystaging-tables">8. Temporary/Staging Tables</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#summary-of-database-table-types">Summary of Database Table Types</a>
+    </li>
+  </ul></nav>
+        </details>
+        <div class="toc-desktop">
+          <h2>Contents</h2>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#relational-database-table-types">Relational Database Table Types</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#1-regular-tables-entity-tables">1. Regular Tables (Entity Tables)</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#2-pivot-bridge-tables-mn-relationships">2. Pivot / Bridge Tables (M:N Relationships)</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#3-lookup-reference-tables-1n-n1-relationships">3. Lookup / Reference Tables (1:N / N:1 Relationships)</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#4-audit-history-tables">4. Audit / History Tables</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#5-aggregate-summary-tables">5. Aggregate / Summary Tables</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#6-configurationsettings-tables">6. Configuration/Settings Tables</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#7-hierarchicaltree-tables-self-referencing">7. Hierarchical/Tree Tables (Self-Referencing)</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#8-temporarystaging-tables">8. Temporary/Staging Tables</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#summary-of-database-table-types">Summary of Database Table Types</a>
+    </li>
+  </ul></nav>
+        </div>
+      </aside>
+      <article class="content">
+        <header>
+          <h1>Relational Database Tables and Relationships</h1>
+          <time>October 10, 2025</time>
+        </header>
+        <div><p>Back when I was teaching, I developed an Excel-based System 
+to handle scoring, ranking, and providing insights for competing teams 
+in the school’s Sportfests. Previously, these tasks were manual and 
+time-consuming. I achieved this by leveraging structured tables, 
+filters, sorting, and advanced formulas, occasionally enhanced with macros.</p>
+<p>At that time, I had neither knowledge of coding nor of databases, nor had I 
+received any formal lessons in them. I never imagined that this would 
+become the core of being a fullstack developer !</p>
+<p>This experience was my first exposure to real-world data and sparked my
+curiosity in programming and database. I quickly realized how powerful
+data is in the modern world. And this fascination still drives me to this day.</p>
+<hr>
+<p><em>Before we proceed</em>: This discussion is not a full tutorial on relational tables or 
+database design. It assumes readers already have a basic understanding of tables 
+and relationships. Well, anyways, the lesson might be understood easily since I did not
+tackle in depth the technical details, so just enjoy reading !</p>
+<h2 id="relational-database-table-types">Relational Database Table Types</h2>
+<h3 id="1-regular-tables-entity-tables">1. <strong>Regular Tables (Entity Tables)</strong></h3>
+<p>These are your main tables representing real-world entities. 
+In an Inventory System,  these correspond to all your items. In other 
+domains, such as fintech, these could represent customers, accounts, 
+or transactions. Regular tables store the detailed, raw data that 
+other tables or computations build upon, forming 
+the foundation of your database or system.</p>
+<ul>
+<li>example: <code>Users</code>, <code>Products</code>, <code>Orders</code></li>
+<li>Each table typically has a <strong>primary key</strong> (like <code>id</code>) to uniquely identify a row.</li>
+</ul>
+<hr>
+<h3 id="2-pivot-bridge-tables-mn-relationships">2. <strong>Pivot / Bridge Tables (M:N Relationships)</strong></h3>
+<p>We love many-to-many relationships, right ? 😄 These tables are used to 
+model <strong>many-to-many relationships</strong> between two entity tables.</p>
+<ul>
+<li><p>example: <code>Users</code> and <code>Roles</code></p>
+<ul>
+<li>One user can have many roles.</li>
+<li>One role can belong to many users.</li>
+<li>The <strong>pivot table</strong> might be called <code>UserRoles</code> 
+with columns: <code>user_id</code> and <code>role_id</code>.</li>
+</ul>
+</li>
+<li><p>Pivot/bridge tables <strong>implement M:N relationships</strong>:</p>
+<ul>
+<li>Each row connects <strong>one record from each table</strong>, and 
+collectively represents all relationships.</li>
+<li>Additional columns can store metadata (e.g., <code>assigned_at</code>, <code>role_level</code>).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Example Data:</strong></p>
+<pre><code>UserRoles
+user_id | role_id | assigned_at
+-------------------------------
+1       | 101     | 2025-01-01
+1       | 102     | 2025-02-15
+2       | 101     | 2025-03-10
+</code></pre><ul>
+<li>Here, <code>user_id</code> references <code>Users.id</code> and <code>role_id</code> references <code>Roles.id</code>.</li>
+</ul>
+<hr>
+<h3 id="3-lookup-reference-tables-1n-n1-relationships">3. <strong>Lookup / Reference Tables (1:N / N:1 Relationships)</strong></h3>
+<p>These tables store <strong>static or semi-static data</strong> 
+used for categorization or validation.</p>
+<ul>
+<li><p>example: <code>Countries</code>, <code>Statuses</code>, <code>Categories</code></p>
+</li>
+<li><p>Lookup tables are typically the <strong>&quot;one&quot; side 
+of a one-to-many (1:N) relationship</strong>:</p>
+<ul>
+<li>example: Many users can belong to one country 
+→ <code>Users.country_id</code> points to <code>Countries.id</code>.</li>
+</ul>
+</li>
+<li><p>From the child/master table perspective, this is 
+a <strong>many-to-one (N:1) relationship</strong>.</p>
+</li>
+<li><p>Lookup tables rarely change and usually contain 
+an <code>id</code>, a <code>code</code>, and a descriptive <code>name</code>.</p>
+</li>
+</ul>
+<p>Use <code>id</code> or <code>code</code> ? That&#39;s the million-dollar 
+question ! 😄 I usually keep both, since having the code makes 
+it easier to read the raw data. Plus, clients typically 
+have their own internal coding system for 
+all entities, so it&#39;s often already provided.</p>
+<p><strong>Example Data:</strong></p>
+<pre><code>Countries
+id | code | name
+------------------
+1  | PH   | Philippines
+2  | JP   | Japan
+
+Users
+id | name  | country_id
+-----------------------
+1  | Alice | 1
+2  | Bob   | 1
+3  | Carol | 2
+</code></pre><ul>
+<li>Alice and Bob belong to the Philippines (N:1 from Users → Countries),</li>
+<li>Each country has many users (1:N from Countries → Users).</li>
+</ul>
+<p><strong>Design Consideration</strong>: The <code>id</code> serves as the primary key for performance, 
+while <code>code</code> provides business meaning that&#39;s often already established in 
+client organizations. During debugging, 
+seeing &quot;PH&quot; instead of &quot;1&quot; makes the data immediately understandable.</p>
+<hr>
+<h3 id="4-audit-history-tables">4. <strong>Audit / History Tables</strong></h3>
+<p>Tables that store <strong>logs or history</strong> of changes.</p>
+<ul>
+<li>example: <code>OrderHistory</code>, <code>UserActivityLog</code></li>
+<li>They are used for tracking changes, rollback, or analytics.</li>
+</ul>
+<p>In real-world development, these audit tables can grow 
+significantly over time. The level of granularity required for 
+audits varies : in some systems, every action may be logged. 
+In such cases, pagination becomes necessary when retrieving 
+subsets of data (for example, data over a three-month period), 
+since the size of that data can be unpredictable.</p>
+<p>However, in other projects where the audit volume is small, say, around 
+30 records per month — the data size for three months is predictable 
+and manageable, so pagination may not be required.</p>
+<hr>
+<h3 id="5-aggregate-summary-tables">5. <strong>Aggregate / Summary Tables</strong></h3>
+<p>In larger devs, databases have precomputed summaries
+for performance. These are commonly encountered in different 
+scenarios, such as reports of projects completed 
+in a year or inventory reports. To be efficient, we 
+compute these summaries and save them in another table, 
+possibly through a regular script, so as not 
+to interrupt the user experience.</p>
+<ul>
+<li>example: <code>MonthlySalesSummary</code> to avoid recalculating 
+totals from the raw <code>Orders</code> table every time.</li>
+</ul>
+<hr>
+<h3 id="6-configurationsettings-tables"><strong>6. Configuration/Settings Tables</strong></h3>
+<p>These tables store <strong>application-specific settings, feature flags, 
+and system parameters</strong> that control how your application behaves. 
+Unlike lookup tables that categorize data, configuration tables 
+define behavior.</p>
+<p>Want to change your app&#39;s upload limit without redeploying ? Need to 
+toggle features on/off ? Configuration tables are your friend ! 😄</p>
+<ul>
+<li>example: <code>AppSettings</code>, <code>FeatureFlags</code>, <code>SystemConfig</code></li>
+<li>Typically have <code>key-value</code> pairs or <code>setting-value</code> structure</li>
+<li>Often cached in memory for performance</li>
+<li>May include metadata like <code>description</code>, <code>data_type</code>, 
+<code>last_modified</code></li>
+</ul>
+<p><strong>Example Data:</strong></p>
+<pre><code>AppSettings
+key              | value    | data_type | description
+-------------------------------------------------------
+max_upload_size  | 10MB     | string    | Maximum file upload size
+session_timeout  | 30       | integer   | Session timeout in minutes
+maintenance_mode | false    | boolean   | Enable maintenance mode
+theme_default    | dark     | string    | Default UI theme
+
+FeatureFlags
+feature_name     | enabled  | rollout_percentage | environment
+------------------------------------------------------------- 
+new_dashboard    | true     | 100               | production
+beta_search      | false    | 0                 | production
+ai_suggestions   | true     | 25                | staging
+</code></pre><p><strong>Design Consideration</strong>: Many developers store both the setting 
+key and a human-readable description to make configuration 
+management easier. The <code>data_type</code> column helps with validation 
+and proper casting in application code.</p>
+<hr>
+<h3 id="7-hierarchicaltree-tables-self-referencing"><strong>7. Hierarchical/Tree Tables (Self-Referencing)</strong></h3>
+<p>These tables represent <strong>nested, tree-like structures</strong> where 
+records can have parent-child relationships within the same table. 
+Think organizational charts, category trees, comment threads, or 
+file system structures.</p>
+<p>The beauty of self-referencing tables ? One table handles unlimited 
+hierarchy levels ! No need to create separate tables for each 
+level of your tree structure.</p>
+<ul>
+<li>example: <code>Categories</code>, <code>Comments</code>, <code>OrganizationalUnits</code>, 
+<code>MenuItems</code></li>
+<li>Uses <code>parent_id</code> that references the same table&#39;s <code>id</code></li>
+<li><code>parent_id</code> is <code>NULL</code> for root/top-level items</li>
+<li>Often includes additional columns like <code>level</code>, <code>sort_order</code>, 
+or <code>path</code></li>
+</ul>
+<p><strong>When to use hierarchical vs. multiple tables:</strong></p>
+<ul>
+<li><strong>Use hierarchical</strong>: When depth is unknown/variable (categories, 
+comments, org charts)</li>
+<li><strong>Use multiple tables</strong>: When structure is fixed (specific 
+business roles like Company → Department → Team)</li>
+</ul>
+<p><strong>Example Data:</strong></p>
+<pre><code>Categories
+id | name           | parent_id | level | sort_order
+----------------------------------------------------
+1  | Electronics    | NULL      | 1     | 1
+2  | Phones         | 1         | 2     | 1
+3  | Laptops        | 1         | 2     | 2
+4  | iPhone         | 2         | 3     | 1
+5  | Samsung        | 2         | 3     | 2
+6  | Gaming Laptops | 3         | 3     | 1
+7  | Business       | 3         | 3     | 2
+
+Comments (Threaded Discussion)
+id | content        | parent_id | user_id | created_at
+----------------------------------------------------
+1  | Great article! | NULL      | 101     | 2025-01-01
+2  | Thanks!        | 1         | 102     | 2025-01-02
+3  | I agree        | 1         | 103     | 2025-01-02
+4  | Me too         | 3         | 104     | 2025-01-03
+</code></pre><p><strong>Design Consideration</strong>: The <code>level</code> column helps with display 
+formatting and query optimization. The <code>sort_order</code> allows manual 
+arrangement of items at the same level. Some developers also store 
+a <code>path</code> column (like <code>/1/2/4/</code>) for faster tree traversal.</p>
+<hr>
+<h3 id="8-temporarystaging-tables"><strong>8. Temporary/Staging Tables</strong></h3>
+<p>These tables serve as <strong>temporary storage</strong> during data processing, 
+imports, transformations, or complex multi-step operations. They&#39;re 
+the workbenches of database operations.</p>
+<ul>
+<li>example: <code>temp_user_import</code>, <code>staging_orders</code>, <code>processing_queue</code></li>
+<li>Often prefixed with <code>temp_</code>, <code>staging_</code>, or <code>work_</code></li>
+<li>Used in ETL (Extract, Transform, Load) processes</li>
+<li>May have relaxed validation rules compared to production tables</li>
+<li>Often dropped or truncated after processing</li>
+</ul>
+<p><strong>Common Use Cases:</strong></p>
+<pre><code>-- Data Import Staging
+staging_users
+id | raw_name    | raw_email       | raw_phone    | status    | errors
+--------------------------------------------------------------------
+1  | john doe    | JOHN@EMAIL.COM  | 123-456-7890 | pending   | NULL
+2  | jane        | invalid-email   | abc-def      | error     | Invalid email, phone
+3  | Bob Smith   | bob@email.com   | 555-123-4567 | validated | NULL
+
+-- Batch Processing Queue
+processing_queue
+id | table_name | record_id | operation | status      | created_at
+----------------------------------------------------------------
+1  | orders     | 1001      | calculate | pending     | 2025-01-01 09:00
+2  | orders     | 1002      | calculate | processing  | 2025-01-01 09:01
+3  | orders     | 1003      | calculate | completed   | 2025-01-01 09:02
+4  | orders     | 1004      | calculate | failed      | 2025-01-01 09:03
+
+-- Complex Calculation Workspace
+temp_monthly_summary
+user_id | month    | total_orders | total_amount | discount_applied | final_amount
+------------------------------------------------------------------------------
+101     | 2025-01  | 5           | 250.00       | 25.00           | 225.00
+102     | 2025-01  | 3           | 150.00       | 0.00            | 150.00
+</code></pre><p><strong>Design Consideration</strong>: Staging tables often include status and 
+error tracking columns to monitor processing progress. They 
+typically mirror the structure of target tables but with 
+additional metadata columns for processing control. Many developers 
+add timestamps to track processing duration and identify 
+bottlenecks.</p>
+<hr>
+<h3 id="summary-of-database-table-types"><strong>Summary of Database Table Types</strong></h3>
+<p><strong>Core Data Tables:</strong></p>
+<ul>
+<li><strong>Regular/Entity Tables</strong> - Your main data (Users, Products, 
+Orders). Foundation tables with primary keys representing 
+real-world entities.</li>
+<li><strong>Lookup/Reference Tables</strong> - Static categorization data 
+(Countries, Statuses). The &quot;one&quot; side of 1:N relationships, 
+referenced by foreign keys.</li>
+</ul>
+<p><strong>Relationship Tables:</strong></p>
+<ul>
+<li><strong>Pivot/Bridge Tables</strong> - Handle many-to-many relationships 
+(UserRoles, StudentCourses). Connect two entity tables via 
+foreign keys, may include relationship metadata.</li>
+<li><strong>Hierarchical/Tree Tables</strong> - Self-referencing for nested 
+structures (Categories, Comments). Use parent_id to create 
+unlimited hierarchy levels.</li>
+</ul>
+<p><strong>System &amp; Process Tables:</strong></p>
+<ul>
+<li><strong>Configuration/Settings Tables</strong> - Application behavior 
+control (AppSettings, FeatureFlags). Key-value pairs for 
+runtime configuration.</li>
+<li><strong>Audit/History Tables</strong> - Change tracking and logs 
+(OrderHistory, ActivityLog). Store historical data for 
+compliance and rollback.</li>
+<li><strong>Aggregate/Summary Tables</strong> - Precomputed data for 
+performance (MonthlySales). Avoid expensive real-time 
+calculations.</li>
+<li><strong>Temporary/Staging Tables</strong> - Data processing workspace 
+(staging_imports). Temporary storage for ETL, validation, 
+and bulk operations.</li>
+</ul>
+</div>
+        <footer class="back-to-top">
+          <a href="#" class="back-to-top-link">← Back to Top</a>
+        </footer>
+      </article>
+    </div>
+  
+</body>
+</html>

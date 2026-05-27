@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Transaction System Design Principles</title>
+  <meta name="description" content="let&#39;s discuss Transaction Design Principles ...">
+  <meta property="og:title" content="Transaction System Design Principles">
+  <meta property="og:description" content="let&#39;s discuss Transaction Design Principles ...">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Transaction System Design Principles">
+  <meta name="twitter:description" content="let&#39;s discuss Transaction Design Principles ...">
+  <link rel="stylesheet" href="/blog-priv/style.css">
+  <link rel="stylesheet" href="/blog-priv/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+    <nav class="top-nav"><a href="/blog-priv/" id="back-link">← Back</a></nav>
+    <script>
+      (function() {
+        var a = document.getElementById('back-link');
+        a.addEventListener('click', function(e) {
+          if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+          if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            e.preventDefault();
+            history.back();
+          }
+        });
+      })();
+    </script>
+    <div class="layout">
+      <aside class="toc">
+        <details class="toc-mobile">
+          <summary>Contents</summary>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#introduction">Introduction</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#1-main-table-and-transaction-tables">1. Main Table and Transaction Tables</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#2-real-time-vs-computed-balances">2. Real-Time vs. Computed Balances</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#3-handling-drafts-and-final-states">3. Handling Drafts and Final States</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#4-avoiding-race-conditions">4. Avoiding Race Conditions</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#5-preventing-duplicate-transactions">5. Preventing Duplicate Transactions</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#6-entity-identification">6. Entity Identification</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#7-migrating-from-code-based-to-id-based-references">7. Migrating from Code-Based to ID-Based References</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#8-when-to-use-separate-draft-final-tables">8. When to Use Separate Draft / Final Tables</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#9-general-transaction-workflow-patterns">9. General Transaction Workflow Patterns</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#those-not-covered">Those Not Covered</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-summary-and-key-takeaways">📝 Summary and Key Takeaways</a>
+    </li>
+  </ul></nav>
+        </details>
+        <div class="toc-desktop">
+          <h2>Contents</h2>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#introduction">Introduction</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#1-main-table-and-transaction-tables">1. Main Table and Transaction Tables</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#2-real-time-vs-computed-balances">2. Real-Time vs. Computed Balances</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#3-handling-drafts-and-final-states">3. Handling Drafts and Final States</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#4-avoiding-race-conditions">4. Avoiding Race Conditions</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#5-preventing-duplicate-transactions">5. Preventing Duplicate Transactions</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#6-entity-identification">6. Entity Identification</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#7-migrating-from-code-based-to-id-based-references">7. Migrating from Code-Based to ID-Based References</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#8-when-to-use-separate-draft-final-tables">8. When to Use Separate Draft / Final Tables</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#9-general-transaction-workflow-patterns">9. General Transaction Workflow Patterns</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#those-not-covered">Those Not Covered</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-summary-and-key-takeaways">📝 Summary and Key Takeaways</a>
+    </li>
+  </ul></nav>
+        </div>
+      </aside>
+      <article class="content">
+        <header>
+          <h1>Transaction System Design Principles</h1>
+          <time>December 14, 2025</time>
+        </header>
+        <div><h2 id="introduction">Introduction</h2>
+<p>Why design this ? Well, it&#39;s the core of most system, right ?</p>
+<p>Designing effective transactional systems is crucial for any application 
+that manages changes in data, such as inventory, finance, or order processing. 
+The following principles and patterns provide a practical foundation 
+for building systems that are reliable, auditable, and scalable, regardless of the domain.</p>
+<hr>
+<h2 id="1-main-table-and-transaction-tables">1. Main Table and Transaction Tables</h2>
+<p>A robust transaction system separates core entity data from transactional records. The main 
+table holds essential, relatively static information about each entity, 
+such as items or accounts, while transaction tables record every event that changes 
+an entity’s state. This separation ensures efficient lookups and a clear audit trail.</p>
+<p>By keeping the main table lean and allowing the transaction table to grow independently, 
+you maintain both performance and traceability. The transaction table captures a 
+detailed log of all events, making it possible to 
+reconstruct the full history of any entity’s state.</p>
+<p>To add some nuance, in strict ledger-based designs the transaction 
+table is treated as the source of truth, while the main table represents 
+a derived or cached state maintained primarily for performance.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>[Main Table: Items]
++----+----------+---------+
+| ID | Name     | Balance |
++----+----------+---------+
+| 1  | Widget A |   100   |
++----+----------+---------+
+
+[Transaction Table: IN/OUT]
++----+---------+--------+--------+--------+
+| ID | Item_ID | Type   | Amount | Date   |
++----+---------+--------+--------+--------+
+| 1  |   1     | IN     |  50    | ...    |
++----+---------+--------+--------+--------+
+</code></pre><hr>
+<h2 id="2-real-time-vs-computed-balances">2. Real-Time vs. Computed Balances</h2>
+<p>Determining the current state of an entity can be done by real-time computation 
+or by maintaining a running balance. </p>
+<p>Real-time computation aggregates all relevant transaction records 
+on demand, ensuring up-to-date results but 
+potentially slowing down as data grows. Running balance stores the current 
+state in the main table and updates it with each transaction, 
+offering fast queries but requiring careful consistency management.</p>
+<p>Choosing between these approaches depends on your system’s scale and 
+performance needs. Real-time computation is often sufficient for 
+small to medium datasets, while running balance is preferable 
+for larger systems or where performance is critical.</p>
+<p>So as for me, given I know the system will not grow that big, I pick
+on-the-fly approach first.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>-- Real-time computation
+SELECT SUM(CASE WHEN Type=&#x27;IN&#x27; THEN Amount ELSE -Amount END)
+FROM Transaction
+WHERE Item_ID = 1;
+
+-- Running balance
+[Main Table: Items]
++----+----------+---------+
+| ID | Name     | Balance |
++----+----------+---------+
+| 1  | Widget A |   100   |
++----+----------+---------+
+</code></pre><hr>
+<h2 id="3-handling-drafts-and-final-states">3. Handling Drafts and Final States</h2>
+<p>Not all transactions are immediately finalized; some may be drafts, 
+pending approval, or cancelled. The most common approach is to 
+include a status field in the transaction table, indicating 
+whether a transaction is a draft, pending, finalized, 
+or cancelled. Only finalized transactions are included in balance computations.</p>
+<p>In more complex workflows like too many statuses, approvals and stages, 
+separate tables for drafts and finalized transactions
+can be used, especially if drafts are 
+frequently edited or deleted. This approach prevents 
+clutter in the main transaction table and simplifies 
+queries on finalized transactions. This is discussed further in Section 8.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>[Transaction Table]
++----+---------+--------+--------+--------+--------+
+| ID | Item_ID | Type   | Amount | Status | Date   |
++----+---------+--------+--------+--------+--------+
+| 1  |   1     | OUT    |  10    | Draft  | ...    |
+| 2  |   1     | OUT    |  10    | Final  | ...    |
++----+---------+--------+--------+--------+--------+
+</code></pre><hr>
+<h2 id="4-avoiding-race-conditions">4. Avoiding Race Conditions</h2>
+<p>Race conditions can occur when multiple processes update the 
+same data simultaneously, leading to inconsistencies. The primary 
+defense is using database transactions, which ensure that related 
+operations are applied atomically. Row-level locking, such as 
+<code>SELECT ... FOR UPDATE</code>, prevents other processes from modifying 
+the same data until the transaction is complete.</p>
+<p>However, heavy concurrent access can lead to deadlocks or transaction 
+failures, so applications should be prepared to detect these cases and 
+retry operations when failures are caused by temporary concurrency issues 
+rather than logical errors.</p>
+<p>Optimistic locking, using version numbers or timestamps, is an alternative 
+approach that works well when conflicts are infrequent. By applying these 
+techniques, transaction systems remain reliable and accurate even under load.</p>
+<p>When using Laravel, we know it&#39;s a matured framework. Laravel 
+lets you manage database transactions in code, without writing
+transaction statements directly in SQL.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>BEGIN TRANSACTION
+  SELECT Balance FROM Items WHERE ID = 1 FOR UPDATE;
+  UPDATE Items SET Balance = Balance - 10 WHERE ID = 1;
+COMMIT;
+</code></pre><hr>
+<h2 id="5-preventing-duplicate-transactions">5. Preventing Duplicate Transactions</h2>
+<p>Duplicate transactions can cause serious errors, such as double 
+billing or overstocking. </p>
+<p>Preventing duplicates is achieved by using 
+unique constraints or idempotency keys, ensuring each transaction is 
+unique. Validation logic in the application layer can also help by checking 
+for existing records with the same attributes before processing a transaction.</p>
+<p>Audit trails and correction logs are important for rectifying errors 
+after the fact. If a duplicate is detected, the system should allow 
+for correction, either by voiding the duplicate or adjusting the balance accordingly.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>[Transaction Table]
++----+---------+--------+--------+----------+
+| ID | Item_ID | Type   | Amount | Ref_No   |
++----+---------+--------+--------+----------+
+| 1  |   1     | IN     |  50    | ABC123   |
++----+---------+--------+--------+----------+
+</code></pre><hr>
+<h2 id="6-entity-identification">6. Entity Identification</h2>
+<p>Stable, unique identifiers are essential for robust transaction systems. 
+Auto-incrementing IDs provide a reliable way to uniquely identify each 
+entity, simplifying database design and ensuring relationships remain 
+intact even if business codes change. User-facing codes should be 
+stored as unique fields, but not used as primary keys.</p>
+<p>All relationships should reference the ID field, not the code, ensuring 
+data integrity and supporting best practices in database normalization.</p>
+<p>This is well done by Laravel as it has the default auto-incrementing IDs.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>[Items]
++----+----------+----------+
+| ID | Code     | Name     |
++----+----------+----------+
+| 1  | WGT-A    | Widget A |
++----+----------+----------+
+</code></pre><hr>
+<h2 id="7-migrating-from-code-based-to-id-based-references">7. Migrating from Code-Based to ID-Based References</h2>
+<p>Legacy systems and even modern systems ( and even myself ) 
+might have the tendency to use business codes as primary references, but migrating 
+to auto-incrementing IDs improves data integrity and maintainability. 
+Start by adding an ID column, update foreign key relationships, 
+and gradually refactor queries and application logic to use IDs instead of codes.</p>
+<p>During the transition, support both code-based and ID-based 
+references, ensuring all new relationships use the ID. Over time, 
+phase out the use of business codes for internal references, 
+thoroughly testing and validating data throughout the process.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>-- Old query
+SELECT * FROM Transactions WHERE Item_Code = &#x27;WGT-A&#x27;;
+
+-- New query
+SELECT * FROM Transactions WHERE Item_ID = 1;
+</code></pre><hr>
+<h2 id="8-when-to-use-separate-draft-final-tables">8. When to Use Separate Draft / Final Tables</h2>
+<p>While a single transaction table with a status field is usually sufficient, 
+separate tables for drafts and finalized transactions are warranted in 
+systems with complex workflows, high draft volumes, or strict audit 
+requirements. This separation prevents clutter, improves 
+performance, and supports advanced features like 
+workflow automation and multi-stage approvals.</p>
+<p>Records are moved from the draft table to the final table upon approval, 
+providing greater control and flexibility in managing transaction lifecycles.
+Or it may be simply copied to the Final table and keep the draft version too.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>[Draft_Transactions]
+[Final_Transactions]
+-- Move record from Draft to Final upon approval
+</code></pre><hr>
+<h2 id="9-general-transaction-workflow-patterns">9. General Transaction Workflow Patterns</h2>
+<p>Transaction systems must manage the lifecycle of each transaction, 
+including status transitions, approvals, and audit trails. 
+Status fields track the state of each transaction, and the system 
+enforces rules for transitioning between 
+states, such as requiring approval before finalization.</p>
+<p>Audit trails log every change, preserving the full history of 
+each transaction. Event sourcing, where every change is recorded 
+as an immutable event, provides maximum auditability 
+and supports features like undo/redo and historical analysis.</p>
+<p><strong>Illustration:</strong></p>
+<pre><code>[Transaction Status Flow]
+Draft → Pending Approval → Final → Cancelled
+</code></pre><hr>
+<h2 id="those-not-covered">Those Not Covered</h2>
+<p>Of course, some common concerns were intentionally not discussed in detail. 
+Filtering, sorting, pagination and indexing are standard practices for handling 
+large datasets and apply broadly beyond transactional system design.</p>
+<hr>
+<h2 id="-summary-and-key-takeaways">📝 Summary and Key Takeaways</h2>
+<p>Designing transactional systems requires careful planning and proven 
+principles. Separating core and transaction data, choosing appropriate 
+balance strategies, handling drafts correctly, and preventing race 
+conditions and duplicates ensure data integrity, performance, 
+and auditability.</p>
+<p><strong>Recap of Key Principles:</strong></p>
+<ol>
+<li><strong>Main and Transaction Tables:</strong> separate core data from events</li>
+<li><strong>Balance Computation:</strong> choose real-time or running balance wisely</li>
+<li><strong>Drafts and Final States:</strong> use statuses or separate tables for workflow</li>
+<li><strong>Race Conditions:</strong> prevent with transactions and locking</li>
+<li><strong>Duplicate Prevention:</strong> enforce uniqueness and idempotency</li>
+<li><strong>Entity Identification:</strong> use stable, auto-incrementing IDs</li>
+<li><strong>Migrating References:</strong> move from code-based to ID-based links</li>
+<li><strong>Separate Tables When Needed:</strong> for complex or high-volume workflows</li>
+<li><strong>Workflow Patterns:</strong> support status transitions and audit trails</li>
+</ol>
+</div>
+        <footer class="back-to-top">
+          <a href="#" class="back-to-top-link">← Back to Top</a>
+        </footer>
+      </article>
+    </div>
+  
+</body>
+</html>

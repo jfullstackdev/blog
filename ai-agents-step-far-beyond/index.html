@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Agents: A Step Far Beyond</title>
+  <meta name="description" content="AI Agents Far Beyond : a whole new experience">
+  <meta property="og:title" content="AI Agents: A Step Far Beyond">
+  <meta property="og:description" content="AI Agents Far Beyond : a whole new experience">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AI Agents: A Step Far Beyond">
+  <meta name="twitter:description" content="AI Agents Far Beyond : a whole new experience">
+  <link rel="stylesheet" href="/blog-priv/style.css">
+  <link rel="stylesheet" href="/blog-priv/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+    <nav class="top-nav"><a href="/blog-priv/" id="back-link">← Back</a></nav>
+    <script>
+      (function() {
+        var a = document.getElementById('back-link');
+        a.addEventListener('click', function(e) {
+          if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+          if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            e.preventDefault();
+            history.back();
+          }
+        });
+      })();
+    </script>
+    <div class="layout">
+      <aside class="toc">
+        <details class="toc-mobile">
+          <summary>Contents</summary>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#-introduction">👋 Introduction</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-advantages-what-ai-agents-do-well">✅ Advantages: What AI Agents Do Well</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#1-full-project-context">1. Full Project Context</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#2-multi-file-capability">2. Multi-File Capability</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#3-self-correcting-code-suggestions">3. Self-Correcting Code Suggestions</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#4-session-based-memory">4. Session-Based Memory</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#5-reasoning-in-both-agent-modes">5. Reasoning in Both Agent Modes</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#6-verbosity-in-both-agent-modes">6. Verbosity in Both Agent Modes</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-disadvantages-where-ai-agents-fall-short">❌ Disadvantages: Where AI Agents Fall Short</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#1-rate-limiting--and--session-timeouts">1. Rate Limiting & Session Timeouts</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#2-overconfident-assumptions-and-overediting">2. Overconfident Assumptions and Overediting</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#3-session-based-memory-only">3. Session-Based Memory Only</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#4-still-requires-human-review">4. Still Requires Human Review</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-my-typical-use-case">🧑‍💻 My Typical Use Case</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-the-evolution-of-coding-from-manual-to-ai-agents">🛠️ The Evolution of Coding: From Manual to AI Agents</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-final-thoughts-really-a-whole-new-experience">💡 Final Thoughts : Really A Whole New Experience</a>
+    </li>
+  </ul></nav>
+        </details>
+        <div class="toc-desktop">
+          <h2>Contents</h2>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#-introduction">👋 Introduction</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-advantages-what-ai-agents-do-well">✅ Advantages: What AI Agents Do Well</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#1-full-project-context">1. Full Project Context</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#2-multi-file-capability">2. Multi-File Capability</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#3-self-correcting-code-suggestions">3. Self-Correcting Code Suggestions</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#4-session-based-memory">4. Session-Based Memory</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#5-reasoning-in-both-agent-modes">5. Reasoning in Both Agent Modes</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#6-verbosity-in-both-agent-modes">6. Verbosity in Both Agent Modes</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-disadvantages-where-ai-agents-fall-short">❌ Disadvantages: Where AI Agents Fall Short</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#1-rate-limiting--and--session-timeouts">1. Rate Limiting & Session Timeouts</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#2-overconfident-assumptions-and-overediting">2. Overconfident Assumptions and Overediting</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#3-session-based-memory-only">3. Session-Based Memory Only</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#4-still-requires-human-review">4. Still Requires Human Review</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-my-typical-use-case">🧑‍💻 My Typical Use Case</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-the-evolution-of-coding-from-manual-to-ai-agents">🛠️ The Evolution of Coding: From Manual to AI Agents</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#-final-thoughts-really-a-whole-new-experience">💡 Final Thoughts : Really A Whole New Experience</a>
+    </li>
+  </ul></nav>
+        </div>
+      </aside>
+      <article class="content">
+        <header>
+          <h1>AI Agents: A Step Far Beyond</h1>
+          <time>July 13, 2025</time>
+        </header>
+        <div><img width="480" height="292" alt="image" src="https://github.com/user-attachments/assets/d970d891-a987-4009-97d8-05fee4c75b8b" /><h2 id="-introduction">👋 Introduction</h2>
+<p>When chat-based ChatGPT was released to the public, it took us by
+surprise. </p>
+<p>but now, AI Agents have arrived ...</p>
+<p>It’s making us rethink the capabilities of Gen AI (narrow AI).
+AI coding tools have evolved from simple autocomplete assistants to
+intelligent <strong>agents</strong> — capable of understanding multi-file codebases,
+correcting themselves, and even assisting with architectural decisions.</p>
+<p>The very first time I encountered this experience, it felt like the
+complete version of an AI Dev Tool — unlike the limited, single-file,
+chat-based assistants from before.</p>
+<p>Don’t get me wrong: chat-based tools were impressive in their time and
+definitely a meaningful step forward compared to having nothing at all.
+But what we have now feels like an entirely new level, not just a
+version upgrade.</p>
+<p>With tools like <strong>GitHub Copilot GPT-4.1</strong> and <strong>Claude Sonnet 3.7</strong>,
+both in Agent Mode, developers are no longer just
+interacting with a simple chat Q&amp;A.
+We’re starting to <strong>collaborate</strong> with AI in real time, like we would
+with a human teammate.</p>
+<p>I&#39;m using GitHub&#39;s premium models, but I mostly rely on GPT-4.1 and
+Claude Sonnet 3.7, both in Agent Mode. If GPT-4.1 is struggling, I switch
+to Claude Sonnet 3.7 or sometimes, I use both to compare their opinions.
+So, most of the points I mention in this article refer specifically to
+these two models. </p>
+<p>I actually started with Claude Sonnet 3.7, but I noticed its slow
+performance even in simple Q&amp;A tasks. So, I tried other models, and
+GPT-4.1 stood out as both capable and fast.</p>
+<p>Of course, there are already many AI agent reviews out there, often with
+detailed examples. But what follows are simply my own observations and
+experiences.</p>
+<h2 id="-advantages-what-ai-agents-do-well">✅ Advantages: What AI Agents Do Well</h2>
+<h3 id="1-full-project-context">1. Full Project Context</h3>
+<p>Today’s AI agents don’t just autocomplete a single function — they
+understand the bigger picture.</p>
+<ul>
+<li>Claude Sonnet 3.7, for example, has a context window big enough to
+read and reason about most modern codebases.</li>
+<li>You can ask it to review an auth module, scan routing logic, or analyze
+service architecture and it follows along without you repeating
+yourself.</li>
+</ul>
+<p>This depth of understanding results in smarter, more relevant output.</p>
+<p>That said, it doesn’t mean these agents are fully capable or truly
+autonomous. If you rely on them constantly, you’ll eventually hit their
+limits: something we don&#39;t like.</p>
+<hr>
+<h3 id="2-multi-file-capability">2. Multi-File Capability</h3>
+<p>Older assistants struggled with code spread across files; they used a
+single-file approach. But we all know code doesn&#39;t work that way, it&#39;s
+almost always multi-file.</p>
+<p>Now, when something is refactored, the AI can update all necessary files
+to ensure nothing breaks as a result of the change.</p>
+<p>And there&#39;s more:</p>
+<ul>
+<li>AI agents can follow logic, types, imports, and state across <strong>multiple
+files and folders</strong>.</li>
+<li>You can say things like: <em>“Refactor this module to use async/await
+instead of callbacks, and make sure the changes flow through all related
+files.”</em> And it will do just that.</li>
+</ul>
+<hr>
+<h3 id="3-self-correcting-code-suggestions">3. Self-Correcting Code Suggestions</h3>
+<p>One of the more advanced features is how these agents <strong>catch and fix
+their own mistakes</strong>.</p>
+<p>During generation, they often pause, detect issues (like a logic bug or
+linting error), and revise thereby ending with a mostly working version of
+the code.</p>
+<p>In my experience, Claude Sonnet 3.7 tends to do a lot of self-correcting,
+while GPT-4.1 usually does not. Maybe this is because GPT-4.1 is more
+efficient in coding than Claude Sonnet 3.7? But I&#39;m not saying one is
+better than the other. I switch to Claude Sonnet 3.7 when GPT-4.1 cannot
+do it.</p>
+<hr>
+<h3 id="4-session-based-memory">4. Session-Based Memory</h3>
+<p>These AI agents don’t have long-term memory (yet), but they do have
+something powerful: <strong>session-based memory</strong>.</p>
+<ul>
+<li>When you ask the model to scan a set of files, it loads that info into
+memory for the rest of the session.</li>
+<li>From that point, you can reference functions, files, or features — and
+it’ll remember them accurately.</li>
+<li>Once the session ends, the memory resets. But during that window, it
+behaves like a dev who just reviewed your entire codebase.</li>
+</ul>
+<p>That’s what I call <strong>immediate memory</strong> — and it’s incredibly effective.</p>
+<p>This is usually my trick: I start by instructing it to learn a specific
+feature first by asking it to scan related files. 
+Once it understands that, I instruct it to do the actual tasks.
+Most of the time, this works well.</p>
+<hr>
+<h3 id="5-reasoning-in-both-agent-modes">5. Reasoning in Both Agent Modes</h3>
+<p>In my experience, I can have a good discussion with GPT-4.1
+about the code when I instruct it to discuss and not modify anything.
+On the other hand, Claude Sonnet 3.7 can aggressively code even if you
+specify no modifications yet, which can disrupt your line of thought at
+that moment.</p>
+<p>When Claude Sonnet 3.7 starts to lose track, I double-check its reasoning
+using GPT-4.1, and I often agree with most of GPT-4.1&#39;s reasoning.</p>
+<hr>
+<h3 id="6-verbosity-in-both-agent-modes">6. Verbosity in Both Agent Modes</h3>
+<p>Claude Sonnet 3.7 seems to be more verbose and
+aggressive. It scans a lot, which can take a long time, even for simple
+tasks. It can easily hit rate limits after just a few commands. For me,
+this is a significant downside — and probably for you too.</p>
+<p>Once again, GPT-4.1 feels more efficient to me most of the time.</p>
+<p>But GPT-4.1, because of that nature, tends to be lazy, I guess. Many
+times, even if I tell it to scan files, it will not scan but will start
+discussing instead, which is of course a dangerous move. So once I sense
+it is not scanning, I will ask it to scan again and request specifics,
+like a function name or a certain line of code in question.</p>
+<h2 id="-disadvantages-where-ai-agents-fall-short">❌ Disadvantages: Where AI Agents Fall Short</h2>
+<p>Despite all the progress, AI agents still have rough edges — and devs
+need to stay sharp.</p>
+<h3 id="1-rate-limiting--and--session-timeouts">1. Rate Limiting &amp; Session Timeouts</h3>
+<p>Heavy usage can lead to throttling, slowdowns, or interruptions, especially 
+when running long code reviews or repo-wide refactors. That&#39;s why I try 
+to avoid Claude Sonnet 3.7 for most tasks, because it&#39;s aggressive and
+tends to scan much more deeply. For moderate coding, GPT-4.1 handles it
+well and is faster, so I rarely hit this limit.</p>
+<hr>
+<h3 id="2-overconfident-assumptions-and-overediting">2. Overconfident Assumptions and Overediting</h3>
+<p>These models often respond with <strong>complete confidence</strong> even when they’re
+making things up.</p>
+<ul>
+<li>They may invent nonexistent functions or features.</li>
+<li>Misunderstand your intent and go in the wrong direction.</li>
+<li>You might ask for a small change, and sometimes it rewrites entire
+files, touches unrelated modules, or renames things globally — often
+creating more review work than expected.</li>
+</ul>
+<p>Here’s a real example I encountered: I was trying to solve the problem
+of hardcoded fixed IDs.</p>
+<p>The first solution was to make it a constant:</p>
+<p><code>const category_id = 3</code></p>
+<p>But it didn’t stop there.</p>
+<p>You know what GPT-4.1 did? It created a flag in the <code>.env</code> file just to
+satisfy the idea that the constant could be set anytime, when all I needed
+was a fixed constant !</p>
+<hr>
+<h3 id="3-session-based-memory-only">3. Session-Based Memory Only</h3>
+<p>Session-based memory is good but it can also be the downside.</p>
+<p>Yes, it can understand your project during a session: but once it ends,
+<strong>everything is forgotten</strong>.</p>
+<ul>
+<li>You’ll need to prompt the agent again, so it’s best to save your previous
+prompts while you’re still attempting for it to work.</li>
+<li>There’s no persistent context or long-term understanding across
+sessions.</li>
+</ul>
+<p>Well, point 2 above also has its own good and bad.
+When a session starts to feel crumpled or the AI begins hallucinating,
+just start a new one.</p>
+<hr>
+<h3 id="4-still-requires-human-review">4. Still Requires Human Review</h3>
+<p>Even with amazing code generation, AI still misses edge cases,
+performance tradeoffs, or secure patterns. You still need to:</p>
+<ul>
+<li>review logic</li>
+<li>ensure quality</li>
+<li>write strong tests</li>
+<li>test for broken features</li>
+</ul>
+<p>It gets you 80% there — but that last 20% still requires your manual effort.</p>
+<h2 id="-my-typical-use-case">🧑‍💻 My Typical Use Case</h2>
+<p>One of my most common workflows goes like this:</p>
+<ul>
+<li>I ask the AI about a specific feature in the codebase, say, how sales
+generation works, what modules and files are involved, and how the logic
+flows.</li>
+<li>The AI &quot;learns&quot; this in the session. Once I&#39;m confident it understands,
+I move to the next step.</li>
+<li>Instead of letting the AI code on its own, I first ask it to tell me a
+detailed plan for how it would develop the new feature.</li>
+<li>I read through the plan, and if I&#39;m confident it&#39;s correct, I then tell
+the AI to proceed with its detailed plan.</li>
+</ul>
+<p>This approach lets me stay in control and ensures the AI is on the right
+track.</p>
+<p>When there is a problem along the way, it&#39;s really case by case. This is
+where a developer&#39;s skill is tested, because we might not immediately know
+where the error is coming from. But if you&#39;re skilled enough in coding,
+even prompting the AI to debug will almost always lead to a resolution.</p>
+<p>The way you guide the AI toward a solution reflects your abilities as the
+dev: real coding skills are still the standard, not just &quot;vibe
+coding.&quot; Vibe coding might work for simple, personal projects, but when
+things get serious, like with business logic, our skills are still
+necessary.</p>
+<p>Also, I believe that too many prompts beyond the core tasks can bombard
+the AI, leading to hallucinations.</p>
+<p>So instead of giving too many prompts in a single attempt, I do what&#39;s
+mentioned above first. Once things are working and stable, I then instruct
+it to apply specific coding guidelines and implement some good reviews,
+say, from CodeRabbit.</p>
+<h2 id="-the-evolution-of-coding-from-manual-to-ai-agents">🛠️ The Evolution of Coding: From Manual to AI Agents</h2>
+<p>Before Copilot Chat and its autocomplete feature, we did everything
+manually, with a lot of help from Stack Overflow, trusted sources on the
+internet, and extensive documentation. Instead of focusing on higher-level
+tasks, we spent a lot of time writing code and then debugging just to get
+it working. Even worse, sometimes we’d get stuck on a bug that felt
+unsolvable, forcing us to create a workaround. And sometimes, we had no
+idea whether we could implement a certain feature simply because it was
+hard to express or implement at the code level.</p>
+<p>With the sheer number of technologies in a modern stack, it often felt
+daunting. Personally, I never really felt like I had a full grasp of
+everything.</p>
+<p>Then came Copilot Chat, which, along with autocomplete, could generate
+blocks of code. This was a huge step forward, but it was still limited to
+one file at a time.
+In this scenario, in order to give Copilot the context, you would send it
+relevant code blocks from other related files so it would know better.
+Hence, we still had to manually code when developing a feature, though I
+felt that about 80% of the code in each block was written by the AI.</p>
+<p>Now, with AI agents that have codebase-wide capabilities, coding has
+become more efficient than ever. It’s no longer isolated to a single file —
+an agent can work across the entire project. Not only is 80% of the code
+written by the AI, but agents can now complete entire tasks much faster,
+as long as the dev provide the right prompt.</p>
+<h2 id="-final-thoughts-really-a-whole-new-experience">💡 Final Thoughts : Really A Whole New Experience</h2>
+<p>AI agents like Copilot GPT-4.1 and Claude Sonnet 3.7 have gone far
+beyond autocompletion — they now reason, refactor, debug, and adapt. They
+understand structure. They work across files. They fix themselves.</p>
+<p>Are they perfect ? No. Are they valuable ? Absolutely. Are they real coding
+companions ? For many developers … they already are, even for me.</p>
+<p>Jobs may now require fewer developers, but highly skilled devs are still
+essential for a project&#39;s success.
+In the end, technology is only as powerful as the people who wield it.</p>
+<p>True super-intelligent AGI is still on the horizon, but without the
+nuances of being truly human (consciousness, creativity,
+empathy, morality, imagination, etc.),
+I doubt it will ever fully match human capability as a replacement.</p>
+</div>
+        <footer class="back-to-top">
+          <a href="#" class="back-to-top-link">← Back to Top</a>
+        </footer>
+      </article>
+    </div>
+  
+</body>
+</html>

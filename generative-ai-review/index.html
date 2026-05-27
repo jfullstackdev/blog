@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Thoughts On Generative AI</title>
+  <meta name="description" content="to Gen AI or not to Gen AI ? is it a threat to human jobs, or just hype ? read this">
+  <meta property="og:title" content="My Thoughts On Generative AI">
+  <meta property="og:description" content="to Gen AI or not to Gen AI ? is it a threat to human jobs, or just hype ? read this">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="My Thoughts On Generative AI">
+  <meta name="twitter:description" content="to Gen AI or not to Gen AI ? is it a threat to human jobs, or just hype ? read this">
+  <link rel="stylesheet" href="/blog-priv/style.css">
+  <link rel="stylesheet" href="/blog-priv/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+    <nav class="top-nav"><a href="/blog-priv/" id="back-link">← Back</a></nav>
+    <script>
+      (function() {
+        var a = document.getElementById('back-link');
+        a.addEventListener('click', function(e) {
+          if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+          if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            e.preventDefault();
+            history.back();
+          }
+        });
+      })();
+    </script>
+    <div class="layout">
+      <aside class="toc">
+        <details class="toc-mobile">
+          <summary>Contents</summary>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#ai-hierarchy">AI Hierarchy</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#randomness-of-answers">Randomness Of Answers</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#accuracy-vs-creativity">Accuracy vs Creativity</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#chatgpt-disclaimer">ChatGPT Disclaimer</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#dealing-with-the-latest-information">Dealing with the Latest Information</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#responsible-use">Responsible Use</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#inconvenient-responsible-use">Inconvenient Responsible Use</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#answers-are-not-transparent">Answers Are Not Transparent</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#downtimes-and-limits">Downtimes and Limits</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#true-intelligence">True Intelligence</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#misinformation--and--disinformation">Misinformation & Disinformation</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#individual-privacy">Individual Privacy</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#github-copilot-as-pair-programmers-for-software-engineers">GitHub Copilot as Pair Programmers For Software Engineers</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#genai-with-different-specialties">GenAI with Different Specialties</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#so-what-gives-">So What Gives ?</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#key-points">Key Points:</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#what-the-future-holds">What The Future Holds</a>
+    </li>
+  </ul></nav>
+        </details>
+        <div class="toc-desktop">
+          <h2>Contents</h2>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#ai-hierarchy">AI Hierarchy</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#randomness-of-answers">Randomness Of Answers</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#accuracy-vs-creativity">Accuracy vs Creativity</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#chatgpt-disclaimer">ChatGPT Disclaimer</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#dealing-with-the-latest-information">Dealing with the Latest Information</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#responsible-use">Responsible Use</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#inconvenient-responsible-use">Inconvenient Responsible Use</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#answers-are-not-transparent">Answers Are Not Transparent</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#downtimes-and-limits">Downtimes and Limits</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#true-intelligence">True Intelligence</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#misinformation--and--disinformation">Misinformation & Disinformation</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#individual-privacy">Individual Privacy</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#github-copilot-as-pair-programmers-for-software-engineers">GitHub Copilot as Pair Programmers For Software Engineers</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#genai-with-different-specialties">GenAI with Different Specialties</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#so-what-gives-">So What Gives ?</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#key-points">Key Points:</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#what-the-future-holds">What The Future Holds</a>
+    </li>
+  </ul></nav>
+        </div>
+      </aside>
+      <article class="content">
+        <header>
+          <h1>My Thoughts On Generative AI</h1>
+          <time>October 20, 2024</time>
+        </header>
+        <div><p>When ChatGPT was fully released to the public, it caught us off guard 
+like a global catastrophe. Schools were shocked because it could 
+almost answer everything, and businesses scrambled to get in on the 
+hype. AI funding and stocks hit an all-time high !</p>
+<h2 id="ai-hierarchy">AI Hierarchy</h2>
+<p>Before we delve into GenAI, it&#39;s good to know its hierarchy.</p>
+<ul>
+<li><p><strong>Artificial Intelligence (AI)</strong></p>
+<ul>
+<li>The broadest category, referring to machines or software that 
+exhibit human-like intelligence, including reasoning, learning, 
+and problem-solving.</li>
+</ul>
+</li>
+<li><p><strong>Machine Learning (ML)</strong></p>
+<ul>
+<li>A subset of AI that focuses on the development of algorithms that 
+allow computers to learn from and make predictions based on data.</li>
+</ul>
+</li>
+<li><p><strong>Deep Learning (DL)</strong></p>
+<ul>
+<li>A further subset of machine learning that uses neural networks 
+with multiple layers (hence &quot;deep&quot;) to analyze various factors 
+of data.</li>
+</ul>
+</li>
+<li><p><strong>Generative AI</strong></p>
+<ul>
+<li>A further subset of deep learning, utilizing neural networks to create 
+outputs similar to the input data. This can generate new content, 
+including text, images, audio, and more, based on the patterns it has learned 
+from existing data. This is where models like GPT 
+(Generative Pre-trained Transformer) fall under.</li>
+</ul>
+</li>
+<li><p><strong>Large Language Models (LLMs)</strong></p>
+<ul>
+<li>A category of Generative AI specifically focused on processing 
+and generating human language. GPT models (like ChatGPT) 
+are examples of LLMs.</li>
+</ul>
+</li>
+<li><p><strong>Specific Implementations</strong></p>
+<ul>
+<li><strong>GPT</strong> (like ChatGPT, GPT-3, GPT-4, etc.): Specific versions 
+of LLMs developed by OpenAI that are trained for various 
+natural language processing tasks.</li>
+<li>Other implementations of LLMs and generative AI by different 
+organizations (e.g., Microsoft Copilot, Google Bard, etc.) 
+that may not be branded as GPT.</li>
+</ul>
+</li>
+</ul>
+<h2 id="randomness-of-answers">Randomness Of Answers</h2>
+<h3 id="accuracy-vs-creativity">Accuracy vs Creativity</h3>
+<p>In the past, Microsoft Copilot, the one integrated with <code>bing.com</code>, 
+provided three options for our answers : creative, balanced
+or accurate.</p>
+<img width="717" height="314" alt="image" src="https://github.com/user-attachments/assets/f0f34c60-4346-4687-94a6-b3ce0a8fa6b1" /><p>This is because GenAI always works on patterns of data.</p>
+<p>If I ask, say, &quot;give me some list of personalities that ... &quot;,
+there are times it will
+give personalities that should not be included in the list.
+Remember, it&#39;s working on patterns so it may give random answers. </p>
+<p>So we still do our own research particularly if this is critical info.</p>
+<h3 id="chatgpt-disclaimer">ChatGPT Disclaimer</h3>
+<p>As of this writing too, the ChatGPT on Web has this disclaimer : 
+&quot;ChatGPT can make mistakes. Consider checking important information.&quot;</p>
+<img width="732" height="484" alt="image" src="https://github.com/user-attachments/assets/35f8ba7f-8bf8-427c-b952-a42ec88d5ffc" /><p>So humans still need to double check the reliability of data.</p>
+<p>Even Microsoft Copilot, as of this writing too,
+has the disclaimer : &quot;Copilot uses AI. Check for mistakes.&quot;</p>
+<h2 id="dealing-with-the-latest-information">Dealing with the Latest Information</h2>
+<p>Both ChatGPT and Microsoft Copilot can now search for the latest
+information on the web.</p>
+<p>However, I wonder how accurately they can answer questions based on
+this data. Are they truly trained on the most recent information?
+Additionally, what happens if the new content they access is
+misleading? Do they have systems in place to check for misinformation
+and disinformation?</p>
+<p>These AI models can learn from human interactions, but this learning
+is limited to individual sessions and does not persist across all
+interactions, as they are not primarily trained on that data.</p>
+<p>As for GitHub Copilot, which is tailored for programmers, it currently
+does not have access to new data. Therefore, it may struggle with
+deprecated or newly introduced functions.</p>
+<p>So, yes, this is one limitation of GenAI.</p>
+<h2 id="responsible-use">Responsible Use</h2>
+<h3 id="inconvenient-responsible-use">Inconvenient Responsible Use</h3>
+<p>When I&#39;m too engrossed in asking questions and seeking answers from
+GitHub Copilot, it can suddenly blur or tag my inquiries as &quot;Responsible
+Use of AI&quot; in certain situations. This can be quite inconvenient, right ?</p>
+<h3 id="answers-are-not-transparent">Answers Are Not Transparent</h3>
+<p>You can&#39;t get answers on sensitive or inappropriate topics. Even
+when you ask about such topics, it will respond in a way that
+reflects this limitation.</p>
+<img width="714" height="355" alt="image" src="https://github.com/user-attachments/assets/dc53d5fc-5c7f-42e7-8959-11704a69ef64" /><h2 id="downtimes-and-limits">Downtimes and Limits</h2>
+<p>In the past, I frequently encountered downtimes and rate limiting when
+using different GPTs due to high demand. Imagine being deeply engrossed
+in coding during a continuous discussion, only for it to suddenly fail
+to answer, causing you to lose your train of thought ! This used to
+happen all the time.</p>
+<p>ChatGPT Web was quite frustrating, often hanging during use. In my
+experience, even though it was hanging, closing and reopening the
+session would complete the answer. However, it has recently improved,
+allowing for continued use.</p>
+<p>In the past, without signing in, Microsoft Copilot on the Web was
+limited to 4 questions, while the mobile app allowed for 10.
+Currently, I’m using it with the updated UI, and I no longer see
+these limitations, but I cannot yet verify any changes regarding
+this limitation.</p>
+<h2 id="true-intelligence">True Intelligence</h2>
+<p>Generative AI (GenAI) is a form of narrow AI that responds based on
+trained data. It excels at creating content like text, images, and music,
+but its capabilities are limited to the patterns it has learned. It was
+never intended as True Intelligence.</p>
+<p>In contrast, Artificial General Intelligence (AGI) is a theoretical
+concept that aims to surpass human intelligence. Unlike GenAI, AGI will
+not branch off from any GenAI we have now; it is independent and seeks
+to replicate the full range of human cognitive abilities, though it has
+its own nuances.</p>
+<p>So, in short, GenAI ended up just like any other human tool.</p>
+<h2 id="misinformation--and--disinformation">Misinformation &amp; Disinformation</h2>
+<p>Even them battle misinformation and disinformation.
+If you ask any GPT how they recognize misinformation and 
+disinformation, they will say, there is a tagging mechanism
+but they are also saying it&#39;s very challenging.
+I just wonder with the multitude of data they are being trained on,
+did humans really tag all of them ? It&#39;s unscalable I think so.</p>
+<h2 id="individual-privacy">Individual Privacy</h2>
+<p>With GitHub Copilot, it only accesses your code when you send it directly.
+Even using <code>@workspace</code> doesn&#39;t seem to grant full codebase access all the
+time. In contrast, Devin AI has full access to your setup, as claimed by
+other users.</p>
+<p>But the question still remains: will everyone feel comfortable with this level
+of access or even the simple act of signing in? Personally, for critical
+or extended discussions, signing in feels unavoidable. However, whenever
+I can avoid it, I take that option. For example, I never sign in during
+the Windows setup, and I haven&#39;t even upgraded to Windows 11.</p>
+<p>When it comes to generalized AI systems like ChatGPT and Microsoft
+Copilot, the sign-in requirement has raised concerns. Even Elon Musk
+expressed frustration over Windows 11 and the integration of
+Copilot into the operating system.</p>
+<h2 id="github-copilot-as-pair-programmers-for-software-engineers">GitHub Copilot as Pair Programmers For Software Engineers</h2>
+<p>At first, I thought it was all a gimmick. Then I tried the traditional
+Copilot on the Editor, just suggesting random code and repeating my code.
+Then I suspected more that it was truly just a gimmick.</p>
+<p>Then came Copilot Chat, tried some questions or pieces of code to refactor
+then I realized this technology is truly working. </p>
+<p>Now I heavily use it. And mind you, in coding, I feel like I&#39;ve matured
+5 years in coding. It&#39;s very efficient when you know how to use this tool.
+Not all situations you can find on StackOverflow, this AI can answer.</p>
+<p>Here is the list of my techniques applicable to both coding and general use:</p>
+<ul>
+<li><p><strong>Ask the Right Questions</strong>: Clear, specific questions often lead to
+more accurate and relevant responses from the AI.</p>
+</li>
+<li><p><strong>Work with Smaller Pieces of Code</strong>: Breaking tasks into smaller
+chunks reduces errors and simplifies debugging, making it a more
+effective approach. This should not come as a surprise because it&#39;s
+also one of the best coding practices.</p>
+</li>
+<li><p><strong>Work with Smaller Chunks of Information</strong>: Similar to coding pieces,
+dividing complex tasks or ideas into smaller, more digestible segments
+enhances understanding and reduces the likelihood of mistakes.
+Remember, Generative AI can hallucinate when bombarded with data,
+so this approach helps maintain clarity and accuracy.</p>
+</li>
+<li><p><strong>Start a New Session</strong>: If your current session feels cluttered and
+the AI&#39;s responses seem off, restarting can help reorganize and
+restructure the conversation for better clarity.</p>
+</li>
+<li><p><strong>Confirm When in Doubt</strong>: If you spot a mistake or feel uncertain,
+you can ask it to confirm whether its answer is correct, such as by
+saying, &quot;Can you confirm your answer is correct?&quot; This prompt can
+confirm that the answer is accurate or regenerate its answer if it&#39;s
+not accurate. You can even provide it with correct information to
+help it lead to a more accurate response.</p>
+</li>
+<li><p><strong>Generative AI Can Derive New Conclusions</strong>: With the right
+approach, you can teach Generative AI to recognize bits of information,
+focus on them, recognize nuances, and derive new insights. Even if
+GenAI is just a form of narrow AI, this capability represents
+a powerful use of this AI, enabling it to make informed decisions,
+offer personalized recommendations, and contribute to
+problem-solving across various domains.</p>
+</li>
+</ul>
+<h2 id="genai-with-different-specialties">GenAI with Different Specialties</h2>
+<p>Much like humans in various fields and subfields, GenAI now have
+specialties too. We might assume that ChatGPT can answer everything
+GitHub Copilot can, but their focuses are different. For example,
+Copilot is specifically designed for coding and provides deeper
+codebase context. However, with the right prompts and approach,
+ChatGPT can also offer useful coding solutions. The key is knowing
+how to leverage each tool effectively.
+I&#39;m using both, and each can be helpful in different situations
+ — even ChatGPT can spot things that Copilot might overlook.</p>
+<h2 id="so-what-gives-">So What Gives ?</h2>
+<p>Yes, AI tools are helpful for humans, even in coding. They
+act like programming partners, providing efficient suggestions
+and saving time. However, you still need to check and analyze
+the AI&#39;s output before implementing it.</p>
+<p>Even experienced developers can’t fully grasp every aspect of
+an evolving tech stack. GenAI helps by answering questions in
+minutes, delivering more context-specific responses than what
+you might find on Stack Overflow or through documentation.</p>
+<p>While AI can build a system, it lacks direction without human
+input. Once you have a fully functional codebase, relying too
+much on tools like GitHub Copilot can cause issues, as they
+don&#39;t understand the system as well as human developers do.</p>
+<p>In demos, AI can build starter projects, but its usefulness
+diminishes when modifying existing code. Clients can&#39;t use AI
+to build entire systems without a developer, as they&#39;ll still
+face challenges piecing everything together and solving problems
+only developers understand.</p>
+<p>In my estimation, we primarily use generative AI (GenAI) for quick
+information, but traditional sources from the web remain irreplaceable.
+While we might rely on GenAI for about 75% of our needs, we still
+verify the information against reputable sources on the web for the
+remaining 25%.</p>
+<h3 id="key-points">Key Points:</h3>
+<ul>
+<li><strong>Coding Partner</strong>: AI acts as a coding assistant but still requires
+human oversight for accuracy.</li>
+<li><strong>Time-Saving</strong>: GenAI provides quick, specific answers, often faster
+and more tailored than searching documentation or forums.</li>
+<li><strong>Initial Setup</strong>: AI is great for building starter templates but
+struggles with established, complex codebases.</li>
+<li><strong>Developer Expertise</strong>: Human developers remain essential for
+system direction, combining code, and solving nuanced problems.</li>
+<li><strong>Challenges with Existing Code</strong>: AI becomes problematic when
+modifying or integrating within an existing codebase.</li>
+</ul>
+<h2 id="what-the-future-holds">What The Future Holds</h2>
+<p>First was the World of Info, where the Internet brought us a wealth of 
+knowledge. Second was Intelligent Assistants, 
+like Siri and Alexa, simplifying
+our tasks. Third is the latest GenAI but still based on patterns, 
+suggesting a future where AI not only understands patterns but also makes 
+autonomous decisions, potentially reshaping every aspect of our lives.</p>
+<p>By now, AI improvements are becoming too fast. We are just abruptly 
+satisfied with GitHub Copilot but
+there are already emerging 
+AI Software Engineers like Devin AI.</p>
+<p>But will we ever reach the point that it thinks like humans, or
+even surpasses them in intelligence, as proposed by theoretical
+AGI? I don&#39;t think so. I believe humans will always be the ultimate
+judge of what they are capable of doing. After all, letting AGI
+decide on its own without any control from humans is really dangerous.</p>
+<p>Time can only tell and I&#39;m thrilled waiting for 
+that time on whether I can be proven wrong or not.</p>
+</div>
+        <footer class="back-to-top">
+          <a href="#" class="back-to-top-link">← Back to Top</a>
+        </footer>
+      </article>
+    </div>
+  
+</body>
+</html>

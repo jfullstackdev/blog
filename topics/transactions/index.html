@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>transactions</title>
+  <meta name="description" content="Articles about transactions">
+  <meta property="og:title" content="transactions">
+  <meta property="og:description" content="Articles about transactions">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="transactions">
+  <meta name="twitter:description" content="Articles about transactions">
+  <link rel="stylesheet" href="/blog-priv/style.css">
+  <link rel="stylesheet" href="/blog-priv/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+          <nav class="top-nav"><a href="/blog-priv/">← Writing</a></nav>
+          <div class="layout">
+            <main class="content">
+              <h1>transactions</h1>
+              <ul class="post-list">
+        <li>
+          <a href="/blog-priv/transaction-design-principles/">Transaction System Design Principles</a>
+          <time>December 14, 2025</time>
+          <span>let's discuss Transaction Design Principles ...</span>
+        </li>
+      </ul>
+              
+            </main>
+          </div>
+        
+</body>
+</html>
