@@ -15,7 +15,7 @@ keep them in one repo.
 
 Another good thing about this is that we have two choices,
 either read the blogs in this repo as is, or view the rendered pages.
-Either way, enjoy!
+Either way, enjoy !
 
 ## Why This?
 
@@ -91,7 +91,7 @@ Fallback behavior:
 - **Missing description** → extracts first paragraph from content, truncates at ~160 chars
 - **Missing topics** → post still appears on the index, no topic chip is shown
 
-## Commands
+## Local Dev Commands
 
 ```bash
 npm install        # Install dependencies
@@ -181,7 +181,7 @@ This blog + generator can handle years of regular writing:
 | [marked-highlight](https://github.com/markedjs/marked-highlight) | Code highlight plugin |
 | [highlight.js](https://highlightjs.org/) | Syntax highlighting engine |
 
-## TOC and Back
+## TOC and Back Conflict
 
 TOC anchor links and the browser Back button are inherently at odds, each
 TOC click pushes a history entry, so Back navigates through every clicked
@@ -259,3 +259,5 @@ across all browsers.
 - Supports private source + public deployment via cross-repo CI
 - Topic pages with chips on index for content browsing
 - Scalable to years of posts without git or build performance issues
+- make sure that in Mobile Browser, the Desktop Site is not enabled, or
+  else, the UI would not be so good
