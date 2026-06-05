@@ -35,6 +35,9 @@ function getBase() {
 }
 const BASE = getBase();
 
+// Full canonical URL for OG tags — set this to your deployed domain
+const SITE_URL = process.env.SITE_URL || 'https://jfullstackdev.github.io';
+
 // ─── HTML escape ───────────────────────────────────────
 
 function escapeHtml(str) {
@@ -98,8 +101,10 @@ function addHeadingIds(html) {
 
 // ─── Layout template ──────────────────────────────────
 
-function page(title, content, description = '', ogType = 'article') {
+function page(title, content, description = '', ogType = 'article', canonicalPath = '') {
   const desc = escapeHtml(description) || escapeHtml(title);
+  const canonicalUrl = canonicalPath ? `${SITE_URL}${canonicalPath}` : '';
+  const ogUrl = canonicalUrl ? `<meta property="og:url" content="${escapeHtml(canonicalUrl)}">` : '';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -109,6 +114,7 @@ function page(title, content, description = '', ogType = 'article') {
   <meta name="description" content="${desc}">
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${desc}">
+  ${ogUrl}
   <meta property="og:type" content="${ogType}">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="${escapeHtml(title)}">
@@ -302,7 +308,7 @@ posts.forEach(post => {
   fs.mkdirSync(path.join(OUTPUT, post.slug), { recursive: true });
   fs.writeFileSync(
     path.join(OUTPUT, post.slug, 'index.html'),
-    page(post.frontmatter.title, body, post.frontmatter.description, 'article')
+    page(post.frontmatter.title, body, post.frontmatter.description, 'article', `${BASE}/${post.slug}/`)
   );
 });
 
@@ -370,13 +376,13 @@ for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
   if (pageNum === 1) {
     fs.writeFileSync(
       path.join(OUTPUT, 'index.html'),
-      page('Writing', paginatePosts(1, totalPages, pagePosts), '', 'website')
+      page('Writing', paginatePosts(1, totalPages, pagePosts), '', 'website', `${BASE}/`)
     );
   } else {
     fs.mkdirSync(path.join(OUTPUT, 'page', String(pageNum)), { recursive: true });
     fs.writeFileSync(
       path.join(OUTPUT, 'page', String(pageNum), 'index.html'),
-      page(`Writing — Page ${pageNum}`, paginatePosts(pageNum, totalPages, pagePosts), '', 'website')
+      page(`Writing — Page ${pageNum}`, paginatePosts(pageNum, totalPages, pagePosts), '', 'website', `${BASE}/page/${pageNum}/`)
     );
   }
 }
@@ -391,7 +397,7 @@ fs.writeFileSync(
       <p>Page not found.</p>
       <a href="${BASE}/">← Go home</a>
     </main>
-  `)
+  `, '', 'website', `${BASE}/404.html`)
 );
 
 // ─── Generate topic pages ─────────────────────────────
@@ -443,6 +449,10 @@ if (topicSlugs.length > 0) {
         ? path.join(OUTPUT, 'topics', slug, 'index.html')
         : path.join(OUTPUT, 'topics', slug, 'page', String(pn), 'index.html');
 
+      const topicUrl = pn === 1
+        ? `${BASE}/topics/${slug}/`
+        : `${BASE}/topics/${slug}/page/${pn}/`;
+
       fs.writeFileSync(
         outPath,
         page(pageTitle, `
@@ -454,7 +464,7 @@ if (topicSlugs.length > 0) {
               ${(tPrev || tNext) ? `<div class="pagination">${tPrev}${tLabel}${tNext}</div>` : ''}
             </main>
           </div>
-        `, `Articles about ${label}`, 'website')
+        `, `Articles about ${label}`, 'website', topicUrl)
       );
     }
   });
