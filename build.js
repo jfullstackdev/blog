@@ -105,6 +105,8 @@ function page(title, content, description = '', ogType = 'article', canonicalPat
   const desc = escapeHtml(description) || escapeHtml(title);
   const canonicalUrl = canonicalPath ? `${SITE_URL}${canonicalPath}` : '';
   const ogUrl = canonicalUrl ? `<meta property="og:url" content="${escapeHtml(canonicalUrl)}">` : '';
+  const ogImage = `<meta property="og:image" content="${SITE_URL}${BASE}/images/og-default.png">`;
+  const twitterImage = `<meta name="twitter:image" content="${SITE_URL}${BASE}/images/og-default.png">`;
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,7 +118,9 @@ function page(title, content, description = '', ogType = 'article', canonicalPat
   <meta property="og:description" content="${desc}">
   ${ogUrl}
   <meta property="og:type" content="${ogType}">
-  <meta name="twitter:card" content="summary">
+  ${ogImage}
+  <meta name="twitter:card" content="summary_large_image">
+  ${twitterImage}
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${desc}">
   <link rel="stylesheet" href="${BASE}/style.css">
