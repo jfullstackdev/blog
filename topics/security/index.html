@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>security</title>
+  <meta name="description" content="Articles about security">
+  <meta property="og:title" content="security">
+  <meta property="og:description" content="Articles about security">
+  <meta property="og:url" content="https://jfullstackdev.github.io/blog/topics/security/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://jfullstackdev.github.io/blog/images/og-default.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://jfullstackdev.github.io/blog/images/og-default.png">
+  <meta name="twitter:title" content="security">
+  <meta name="twitter:description" content="Articles about security">
+  <link rel="stylesheet" href="/blog/style.css">
+  <link rel="stylesheet" href="/blog/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+          <nav class="top-nav"><a href="/blog/">← Writing</a></nav>
+          <div class="layout">
+            <main class="content">
+              <h1>security</h1>
+              <ul class="post-list">
+        <li>
+          <a href="/blog/auth-patterns/">Authentication Patterns: Tokens, Sessions, and Request Signing</a>
+          <time>September 15, 2026</time>
+          <span>these are some authentication approaches I have encountered in both personal and professional work, so I wanted to document them</span>
+        </li>
+      </ul>
+              
+            </main>
+          </div>
+        
+</body>
+</html>

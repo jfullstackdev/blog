@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Authentication Patterns: Tokens, Sessions, and Request Signing</title>
+  <meta name="description" content="these are some authentication approaches I have encountered in both personal and professional work, so I wanted to document them">
+  <meta property="og:title" content="Authentication Patterns: Tokens, Sessions, and Request Signing">
+  <meta property="og:description" content="these are some authentication approaches I have encountered in both personal and professional work, so I wanted to document them">
+  <meta property="og:url" content="https://jfullstackdev.github.io/blog/auth-patterns/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://jfullstackdev.github.io/blog/images/og-default.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://jfullstackdev.github.io/blog/images/og-default.png">
+  <meta name="twitter:title" content="Authentication Patterns: Tokens, Sessions, and Request Signing">
+  <meta name="twitter:description" content="these are some authentication approaches I have encountered in both personal and professional work, so I wanted to document them">
+  <link rel="stylesheet" href="/blog/style.css">
+  <link rel="stylesheet" href="/blog/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+    <nav class="top-nav"><a href="/blog/" id="back-link">← Back</a></nav>
+    <script>
+      (function() {
+        var a = document.getElementById('back-link');
+        a.addEventListener('click', function(e) {
+          if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+          if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            e.preventDefault();
+            history.back();
+          }
+        });
+      })();
+    </script>
+    <div class="layout">
+      <aside class="toc">
+        <details class="toc-mobile">
+          <summary>Contents</summary>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#1-bearer-tokens">1. Bearer Tokens</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#user-managed-tokens">User-Managed Tokens</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#application-managed-authorization">Application-Managed Authorization</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#advantages">Advantages</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#disadvantages">Disadvantages</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#2-request-signing">2. Request Signing</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#exchange-example">Exchange Example</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#why-request-signing">Why Request Signing?</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#replay-protection">Replay Protection</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#ip-whitelisting">IP Whitelisting</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#advantages">Advantages</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#disadvantages">Disadvantages</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#3-session-based-authentication">3. Session-Based Authentication</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#laravel-sanctum">Laravel Sanctum</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#session-vs-token">Session vs Token</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#advantages">Advantages</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#disadvantages">Disadvantages</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#authentication-vs-authorization">Authentication vs Authorization</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#how-i-think-about-choosing-between-them">How I Think About Choosing Between Them</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#public-developer-api">Public Developer API</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#first-party-web-application">First-Party Web Application</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#sensitive-server-to-server-api">Sensitive server-to-server API</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#application-with-many-different-user-roles">Application with Many Different User Roles</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#final-thought">Final Thought</a>
+    </li>
+  </ul></nav>
+        </details>
+        <div class="toc-desktop">
+          <h2>Contents</h2>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#1-bearer-tokens">1. Bearer Tokens</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#user-managed-tokens">User-Managed Tokens</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#application-managed-authorization">Application-Managed Authorization</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#advantages">Advantages</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#disadvantages">Disadvantages</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#2-request-signing">2. Request Signing</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#exchange-example">Exchange Example</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#why-request-signing">Why Request Signing?</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#replay-protection">Replay Protection</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#ip-whitelisting">IP Whitelisting</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#advantages">Advantages</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#disadvantages">Disadvantages</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#3-session-based-authentication">3. Session-Based Authentication</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#laravel-sanctum">Laravel Sanctum</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#session-vs-token">Session vs Token</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#advantages">Advantages</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#disadvantages">Disadvantages</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#authentication-vs-authorization">Authentication vs Authorization</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#how-i-think-about-choosing-between-them">How I Think About Choosing Between Them</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#public-developer-api">Public Developer API</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#first-party-web-application">First-Party Web Application</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#sensitive-server-to-server-api">Sensitive server-to-server API</a>
+    </li>
+  
+    <li class="lvl-3">
+      <a href="#application-with-many-different-user-roles">Application with Many Different User Roles</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#final-thought">Final Thought</a>
+    </li>
+  </ul></nav>
+        </div>
+      </aside>
+      <article class="content">
+        <header>
+          <h1>Authentication Patterns: Tokens, Sessions, and Request Signing</h1>
+          <time>September 15, 2026</time>
+        </header>
+        <div><p>These are some authentication approaches I have encountered in both
+personal and professional work, so I wanted to document them.</p>
+<p>This is <strong>not intended to be a step-by-step tutorial</strong> or a complete guide
+to authentication. It is more of a collection of approaches, along with
+some observations about where they are commonly used, why they might be
+chosen, and their advantages and disadvantages.</p>
+<p>Some examples are specific to technologies or services I have worked with,
+so they should not necessarily be treated as guaranteed or universal
+implementations.</p>
+<hr>
+<h2 id="1-bearer-tokens">1. Bearer Tokens</h2>
+<p>This is probably the authentication mechanism I have encountered the most
+so far.</p>
+<p>The basic idea is fairly simple: the client obtains a token and sends it
+with each request, usually through the <code>Authorization</code> header:</p>
+<pre><code class="hljs language-http"><span class="hljs-attribute">Authorization</span><span class="hljs-punctuation">: </span>Bearer &lt;token&gt;
+</code></pre><p>The server then validates the token and determines whether the request is
+allowed.</p>
+<p>Bearer tokens are extremely common in APIs. Even GitHub&#39;s API, for example,
+supports tokens for authentication.</p>
+<p>There are different ways these tokens can be issued and managed, though,
+and this is where the implementations start to differ.</p>
+<hr>
+<h3 id="user-managed-tokens">User-Managed Tokens</h3>
+<p>This is where the user themselves creates a token
+and determines what permissions that token should have.</p>
+<p>A good example is a GitHub Personal Access Token.</p>
+<p>The user can go into the GitHub settings, create a token, and select the
+permissions or scopes associated with that token.</p>
+<p>The model is essentially:</p>
+<pre><code class="hljs language-text">User
+  ↓
+Creates Token
+  ↓
+Selects Permissions
+  ↓
+Uses Token with API
+</code></pre><p>This makes a lot of sense for developer-facing APIs because the person
+using the API is usually technical enough to understand concepts like:</p>
+<ul>
+<li>scopes</li>
+<li>permissions</li>
+<li>expiration</li>
+<li>token rotation</li>
+<li>API access</li>
+</ul>
+<p>The token is also usually treated as a credential. Whoever possesses the
+token can potentially use it, hence the term <strong>bearer token</strong>.</p>
+<p>The server generally does not care who physically holds the token. It cares
+that the token is valid.</p>
+<hr>
+<h3 id="application-managed-authorization">Application-Managed Authorization</h3>
+<p>Another variation is where the user is not expected to understand or
+configure technical permissions themselves.</p>
+<p>In this case, <strong>the user is the client</strong>, rather than another developer
+integrating with the API.</p>
+<p>For example, imagine an application with:</p>
+<pre><code class="hljs language-text">Admin
+ ├── Users
+ ├── Roles
+ └── Permissions
+</code></pre><p>Instead of asking the customer to manually create a token and select
+technical scopes, we provide a UI where an administrator can define roles.</p>
+<p>For example:</p>
+<pre><code class="hljs language-text">Administrator
+    ├── Users: Read
+    ├── Users: Create
+    ├── Users: Update
+    ├── Users: Delete
+    └── Reports: Read
+
+Manager
+    ├── Users: Read
+    └── Reports: Read
+</code></pre><p>The application then determines what the authenticated user is allowed to
+do.</p>
+<p>This is where <strong>RBAC (Role-Based Access Control)</strong> comes into the picture.</p>
+<p>The important distinction here is:</p>
+<blockquote>
+<p>Authentication answers &quot;Who are you?&quot;</p>
+</blockquote>
+<blockquote>
+<p>Authorization answers &quot;What are you allowed to do?&quot;</p>
+</blockquote>
+<p>A bearer token can authenticate the user, while RBAC determines what that
+authenticated user can access.</p>
+<p>For Bearer + RBAC, the approach is Cognito + DB as an example.</p>
+<p>Cognito answers &quot;who is this and roughly what they are&quot;
+(identity + role claim), while your DB answers &quot;what exactly
+may they do right now&quot; (live, relational, auditable).</p>
+<hr>
+<h3 id="advantages">Advantages</h3>
+<ul>
+<li>very simple API authentication model</li>
+<li>easy to implement</li>
+<li>widely supported</li>
+<li>works well for scripts, CLI tools, integrations, and developer
+applications</li>
+<li>easy to attach scopes or permissions</li>
+<li>does not require the server to maintain a session for every request</li>
+</ul>
+<hr>
+<h3 id="disadvantages">Disadvantages</h3>
+<ul>
+<li>a stolen token can potentially be used by whoever possesses it</li>
+<li>token rotation and revocation need to be handled properly</li>
+<li>tokens need to be stored securely</li>
+<li>long-lived tokens increase the impact of credential theft</li>
+<li>users may accidentally expose tokens in source code, logs, or
+configuration</li>
+</ul>
+<p>Overall, bearer tokens are a good default for many API scenarios
+because they are simple and widely supported. The tradeoff is that the
+security of the credential is heavily dependent on protecting the token.</p>
+<p>Things such as:</p>
+<ul>
+<li>short expiration times</li>
+<li>refresh tokens</li>
+<li>token rotation</li>
+<li>scopes</li>
+<li>secure storage</li>
+<li>revocation</li>
+<li>HTTPS</li>
+</ul>
+<p>become important parts of the overall design.</p>
+<p>As a side note, I find it hard to grasp what&#39;s the idea
+of a refresh token.</p>
+<p>What I missed is that, if an attacker gets it somehow,
+they can now use it as a legitimate user. With a refresh
+token, the access token can have a short lifetime, so the time
+and damage they can do is more limited. Of course, they
+may still find ways to exploit it, but that&#39;s out of
+scope here. I just wanted to emphasize the part of the
+concept that was difficult for me to grasp.</p>
+<hr>
+<h2 id="2-request-signing">2. Request Signing</h2>
+<p>This is something I commonly associate with financial APIs, exchanges, and
+other systems where API access can perform sensitive operations.</p>
+<p>For example, some cryptocurrency exchanges provide APIs that allow users to
+build trading applications or bots.</p>
+<p>Instead of simply sending:</p>
+<pre><code class="hljs language-http"><span class="hljs-attribute">Authorization</span><span class="hljs-punctuation">: </span>Bearer &lt;token&gt;
+</code></pre><p>the client can be required to generate a cryptographic signature for the
+request.</p>
+<p>Conceptually:</p>
+<pre><code class="hljs language-text">Request
+   +
+Timestamp
+   +
+Nonce
+   +
+Secret
+   ↓
+Signature
+</code></pre><p>The server can then verify that signature using the corresponding secret or
+public key, depending on the signing mechanism.</p>
+<p>The exact implementation varies between APIs.</p>
+<p>Also, it can authenticate a client/application/key holder,
+not just human or user.</p>
+<p>Some use HMAC-based signatures, while others use asymmetric cryptography.</p>
+<h3 id="exchange-example">Exchange Example</h3>
+<p>So the gist is, you get the key and secret pair. Then the key is
+just an index. It points to a row in the database. That row
+holds two things: the secret and the permissions.</p>
+<p>When a request comes in, the system fetches the row using the key, uses
+the stored secret to verify your signature (it computes the same HMAC
+and compares: match means it&#39;s really you), then checks the row&#39;s permission
+flags against what the endpoint requires. The secret never leaves that row.
+And the key by itself? It just tells the server &quot;go find row 7&quot;, useless
+to anyone who doesn&#39;t hold the secret that proves they&#39;re allowed to ask.</p>
+<p>On your machine:</p>
+<ol>
+<li>Build the params dict. {&quot;symbol&quot;: ..., &quot;side&quot;: ..., &quot;quantity&quot;: ...,
+&quot;price&quot;: ..., &quot;timestamp&quot;: ...} — every piece of business meaning in the
+request, plus a timestamp captured at this moment.</li>
+<li>Append the API key to a header. The key is just the identifier; it&#39;s
+safe to send.</li>
+<li>Serialize params to a canonical string. Flat, alphabetically sorted,
+&amp;-joined: price=398&amp;quantity=10.05&amp;side=BUY&amp;.... This rule is fixed by
+the API&#39;s docs — every client must build it identically.</li>
+<li>Compute the signature. HMAC-SHA256(secret, canonical_string) →
+64-character hex digest. This is the part the secret actually touches.</li>
+<li>Append signature=<digest> to the params. Now the request URL has
+everything: meaning + freshness + proof.</li>
+<li>Send over HTTPS. Server receives key header + URL with all params +
+signature, all readable on the wire.</li>
+</ol>
+<p>so it looks like:</p>
+<pre><code>POST https://api.example.com/v1/order?price=398&amp;quantity=10.05&amp;recvWindow=5000&amp;side=BUY&amp;symbol=UNIPHP&amp;timestamp=1787123456789&amp;type=LIMIT&amp;signature=7a5f2c0e91b8d4a3f6e0c2b19d8a4473e5c6b0d9f8a2134e7b6c5d4e3f2a1b0c9
+
+X-API-KEY: 3aF9k2Lm7XpQ4wN8vB1cD6sJ0hR5tYU2iO9eP3gK7zA4qM1nW6bE
+</code></pre><p>On the exchange&#39;s server:</p>
+<ol start="7">
+<li>Pull the key from the header. key = &quot;3aF9k2Lm...&quot; — just identifies which
+row to read.</li>
+<li>Look up the row. One database read; from that row it has the stored
+secret and the permission flags (Read/Trade/Withdraw toggles).</li>
+<li>Reconstruct the canonical string from the URL&#39;s params (minus
+signature), using the same sort-and-join rule.</li>
+<li>Recompute the HMAC. HMAC-SHA256(stored_secret,
+reconstructed_string) → server&#39;s own digest.</li>
+<li>Compare. The two digests must match byte-for-byte. If they don&#39;t →
+reject (could be tampering, wrong key, clock skew — doesn&#39;t matter, same
+answer: no).</li>
+<li>If valid, check permissions. The endpoint you&#39;re hitting is tagged
+&quot;needs Trade&quot;; the key&#39;s row says trade = true; pass → process the order.
+If trade = false → reject with permission error, even though the
+signature was perfectly valid.</li>
+</ol>
+<p>Then the order reaches the matching engine, fills or doesn&#39;t, the response
+comes back, and the cycle ends.</p>
+<hr>
+<h3 id="why-request-signing">Why Request Signing?</h3>
+<p>At first glance, it might seem like request signing is simply &quot;a more
+secure bearer token.&quot;</p>
+<p>I think the more useful way to look at it is that it provides a different
+security property.</p>
+<p>With a basic bearer token:</p>
+<pre><code class="hljs language-text">Possession of token
+        ↓
+Can make request
+</code></pre><p>With request signing:</p>
+<pre><code class="hljs language-text">Possession of the secret
+        ↓
+Ability to produce a valid signature for the request
+        ↓
+Valid request
+</code></pre><p>The signature can also be based on information about the request itself.</p>
+<p>For example:</p>
+<pre><code class="hljs language-text">HTTP Method
++
+Path
++
+Timestamp
++
+Request Body
+        ↓
+Signature
+</code></pre><p>This means the signature can prove that the client possessed the secret
+when constructing that particular request.</p>
+<p>Depending on the implementation, this can also help protect against request
+tampering and replay attacks.</p>
+<p>However, <strong>request signing by itself does not automatically provide replay
+protection</strong>. The protocol needs additional mechanisms, such as timestamps,
+nonces, request IDs, or expiration windows, and the server needs to actually
+validate those values.</p>
+<p>So the useful distinction for me is:</p>
+<pre><code class="hljs language-text">Request Signing
+      ↓
+Request authenticity / integrity
+      +
+Replay Protection Mechanisms
+      ↓
+Stronger protection against replay
+</code></pre><p>The exact security properties depend on how the signing protocol is
+designed and implemented.</p>
+<hr>
+<h3 id="replay-protection">Replay Protection</h3>
+<p>So, as mentioned above, one particularly interesting part of 
+request signing is replay protection.</p>
+<p>Imagine an attacker somehow captures this request:</p>
+<pre><code class="hljs language-text">POST /api/withdraw
+
+amount=1000
+</code></pre><p>If the authentication mechanism is simply a bearer token, the attacker
+might be able to resend the same request.</p>
+<p>With request signing, the API can require things such as:</p>
+<ul>
+<li>timestamp</li>
+<li>nonce</li>
+<li>request ID</li>
+<li>expiration window</li>
+</ul>
+<p>The server can then reject requests that are too old or have already been
+processed.</p>
+<p>For example:</p>
+<pre><code class="hljs language-text">Timestamp: 1750000000
+Nonce: abc123
+Signature: xyz...
+</code></pre><p>The server can check:</p>
+<pre><code class="hljs language-text">Is timestamp recent?
+        ↓
+Has nonce already been used?
+        ↓
+Does signature match?
+        ↓
+Is the request otherwise authorized?
+</code></pre><p>This makes the authentication scheme considerably more involved, but also
+potentially more resistant to replay.</p>
+<p>The important part is that the server must actually enforce these replay
+protections. A signed request that is valid indefinitely could still
+potentially be replayed.</p>
+<hr>
+<h3 id="ip-whitelisting">IP Whitelisting</h3>
+<p>Some systems combine request signing with <strong>IP whitelisting</strong>.</p>
+<p>The API credentials might only be accepted when the request comes from a
+previously configured IP address.</p>
+<p>Conceptually:</p>
+<pre><code class="hljs language-text">Valid Credentials
+        +
+Valid Signature
+        +
+Approved IP
+        ↓
+Request Accepted
+</code></pre><p>This adds another layer of restriction.</p>
+<p>Even if someone obtains the API credentials, they may not be able to use
+them from an arbitrary location.</p>
+<p>Of course, IP whitelisting is not authentication by itself. It is better
+thought of as an additional network-level security control.</p>
+<p>I encountered this problem even more while developing my Trade Helper 
+for Coins.ph, since they only accept IPv6 and not IPv4. Because of that, 
+a lot of requests can fail, and I need to adjust the code to make 
+the requests work properly. But that&#39;s also part of the premise 
+of being more secure.</p>
+<hr>
+<h3 id="advantages">Advantages</h3>
+<ul>
+<li>stronger request integrity</li>
+<li>can provide protection against request tampering</li>
+<li>can provide replay protection when implemented correctly</li>
+<li>useful for server-to-server communication</li>
+<li>well suited to high-value or sensitive operations</li>
+<li>credentials can be tied to a specific request</li>
+<li>can be combined with additional controls such as IP allowlisting</li>
+</ul>
+<h3 id="disadvantages">Disadvantages</h3>
+<p>The biggest disadvantage, in my opinion, is complexity.</p>
+<p>Compared with:</p>
+<pre><code class="hljs language-http"><span class="hljs-attribute">Authorization</span><span class="hljs-punctuation">: </span>Bearer &lt;token&gt;
+</code></pre><p>you now have to worry about:</p>
+<ul>
+<li>canonicalizing requests</li>
+<li>generating signatures</li>
+<li>timestamps</li>
+<li>nonces</li>
+<li>clock synchronization</li>
+<li>hashing</li>
+<li>secret management</li>
+<li>replay protection</li>
+<li>signature verification</li>
+<li>debugging failed signatures</li>
+</ul>
+<p>A small difference in how the request is constructed can potentially result
+in a completely different signature. As mentioned above, this is also one of the
+problems I had to deal with when I was developing the
+Trade Helper using the API of Coins.ph.</p>
+<p>This makes request signing more difficult to implement and troubleshoot.</p>
+<p>It is also less convenient for browser-based applications because exposing
+long-lived signing secrets to frontend JavaScript would defeat much of the
+security model.</p>
+<hr>
+<h2 id="3-session-based-authentication">3. Session-Based Authentication</h2>
+<p>This is something that is commonly provided by full-stack web frameworks.
+Laravel is a good example.</p>
+<p>In a traditional session-based application, the server authenticates the
+user and creates a session. The browser then receives a session cookie.</p>
+<p>Conceptually:</p>
+<pre><code class="hljs language-text">Browser
+   ↓
+Login
+   ↓
+Laravel
+   ↓
+Creates Session
+   ↓
+Session Cookie
+   ↓
+Browser
+</code></pre><p>For subsequent requests:</p>
+<pre><code class="hljs language-text">Browser
+   ↓
+Session Cookie
+   ↓
+Laravel
+   ↓
+Validate Session
+   ↓
+Authenticated User
+</code></pre><p>The client does not necessarily need to manage an API access token itself.</p>
+<p>Instead, the browser maintains the session through cookies.</p>
+<hr>
+<h3 id="laravel-sanctum">Laravel Sanctum</h3>
+<p>For example, imagine:</p>
+<pre><code class="hljs language-text">React Frontend
+       ↓
+     HTTP
+       ↓
+Laravel Backend
+       ↓
+    Sanctum
+       ↓
+Authenticated User
+</code></pre><p>For a first-party SPA, Sanctum can provide a convenient authentication
+mechanism based around cookies and Laravel&#39;s authentication system.</p>
+<p>This is somewhat different from the architecture where a frontend receives
+a JWT from something like an external identity provider and then sends that
+token to an API. Note also, I used JWT as the example of Bearer token but it
+can be any opaque random token.</p>
+<p>The important thing is not that one approach is universally better.</p>
+<p>They solve slightly different problems and have different tradeoffs.</p>
+<hr>
+<h3 id="session-vs-token">Session vs Token</h3>
+<p>A simplified comparison would be:</p>
+<h4>Session</h4>
+<pre><code class="hljs language-text">Browser
+   ↓
+Session Cookie
+   ↓
+Server
+   ↓
+Session State
+</code></pre><h4>Bearer Token</h4>
+<pre><code class="hljs language-text">Client
+   ↓
+Bearer Token
+   ↓
+API
+   ↓
+Validate Token
+</code></pre><p>The main difference is <strong>where the authentication state lives</strong>. With sessions,
+the browser holds a session identifier while the server maintains the session
+state. With a self-contained token such as a JWT, the token can carry claims
+that the server validates without retrieving session state.</p>
+<p>This is why JWTs are often described as &quot;stateless.&quot; It can reduce dependence
+on a centralized session store, but can also make revocation and immediate
+permission changes more complicated. Sessions, on the other hand, make
+server-side invalidation straightforward because the server controls the
+session state.</p>
+<p>As a rough heuristic:</p>
+<ul>
+<li><strong>Session:</strong> browser-only, first-party web application, one backend owns
+the login.</li>
+<li><strong>Bearer:</strong> multiple clients, multiple APIs, a central identity provider,
+or third-party integrations.</li>
+</ul>
+<p>This is not a hard rule. The right choice depends on the application&#39;s
+architecture and security requirements.</p>
+<hr>
+<h3 id="advantages">Advantages</h3>
+<ul>
+<li>very natural for browser applications</li>
+<li>cookies are well supported by browsers</li>
+<li><code>HttpOnly</code> cookies can prevent JavaScript from directly reading the
+credential</li>
+<li>easy to invalidate sessions server-side</li>
+<li>mature security model</li>
+<li>convenient for traditional full-stack applications</li>
+<li>good integration with server-side frameworks</li>
+</ul>
+<h3 id="disadvantages">Disadvantages</h3>
+<ul>
+<li>server-side session state needs to be managed</li>
+<li>scaling may require shared session storage</li>
+<li>cross-origin frontend/backend setups can introduce additional complexity</li>
+<li>CSRF needs to be considered</li>
+<li>less convenient for third-party API consumers</li>
+<li>session expiration and invalidation need to be designed carefully</li>
+</ul>
+<hr>
+<h2 id="authentication-vs-authorization">Authentication vs Authorization</h2>
+<p>As we know, authentication is just the first step in security.
+There is also authorization for more fine-grained control. I had
+already mentioned it above so many times, so it&#39;s worth having 
+a dedicated section for this.</p>
+<p>Authentication is:</p>
+<blockquote>
+<p>Who is this?</p>
+</blockquote>
+<p>Authorization is:</p>
+<blockquote>
+<p>What can this person or application do?</p>
+</blockquote>
+<p>For example:</p>
+<pre><code class="hljs language-text">Authentication
+      ↓
+&quot;This is John.&quot;
+      ↓
+Authorization
+      ↓
+&quot;John is an Administrator.&quot;
+      ↓
+Permissions
+      ↓
+&quot;John can delete users.&quot;
+</code></pre><p>A bearer token can be used for authentication.
+A session can be used for authentication.
+Request signing can be used to authenticate a machine or application.</p>
+<p>But all of them can still have an authorization layer on top.</p>
+<p>This is where concepts such as:</p>
+<ul>
+<li>RBAC</li>
+<li>scopes</li>
+<li>permissions</li>
+<li>policies</li>
+<li>resource ownership</li>
+</ul>
+<p>come into play.</p>
+<hr>
+<h2 id="how-i-think-about-choosing-between-them">How I Think About Choosing Between Them</h2>
+<p>What problem are we trying to solve, and what is the threat model?</p>
+<p>A rough mental model for me would be:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Typical Use</th>
+<th>Main Strength</th>
+<th>Main Tradeoff</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bearer Token</td>
+<td>APIs, integrations, developer platforms</td>
+<td>Simple and widely supported</td>
+<td>Token theft/replay</td>
+</tr>
+<tr>
+<td>Request Signing</td>
+<td>Financial APIs, exchanges, server-to-server</td>
+<td>Request integrity and stronger credential proof</td>
+<td>Complexity</td>
+</tr>
+<tr>
+<td>Session</td>
+<td>Browser / first-party web applications</td>
+<td>Excellent browser integration</td>
+<td>Stateful architecture and CSRF considerations</td>
+</tr>
+</tbody></table>
+<p>For example:</p>
+<h3 id="public-developer-api">Public Developer API</h3>
+<p>A bearer token or OAuth-style access token is often a natural choice.</p>
+<p>Developers need something straightforward that they can use from different
+applications, scripts, and services.</p>
+<h3 id="first-party-web-application">First-Party Web Application</h3>
+<p>A session-based approach can be very convenient.</p>
+<p>The browser already has a mature cookie mechanism, and server-side session
+management can make authentication and logout straightforward.</p>
+<h3 id="sensitive-server-to-server-api">Sensitive server-to-server API</h3>
+<p>Request signing can make more sense when the operations are highly
+sensitive and request integrity or replay protection is important.</p>
+<h3 id="application-with-many-different-user-roles">Application with Many Different User Roles</h3>
+<p>Regardless of which authentication mechanism is chosen, an authorization
+system such as RBAC may be needed.</p>
+<p>For example:</p>
+<pre><code class="hljs language-text">Authentication
+      ↓
+Who are you?
+      ↓
+Authorization
+      ↓
+What role do you have?
+      ↓
+What permissions does that role have?
+      ↓
+Can you perform this action?
+</code></pre><hr>
+<h2 id="final-thought">Final Thought</h2>
+<p>The main thing I have taken away for authentication is that
+authentication is not really about picking one technology.</p>
+<p>A system might use several of these patterns at the same time.</p>
+<p>For example:</p>
+<pre><code class="hljs language-text">User
+ ↓
+Session / Identity Provider
+ ↓
+Authentication
+ ↓
+JWT / Session
+ ↓
+RBAC
+ ↓
+Permissions
+ ↓
+API
+</code></pre><p>while a separate machine-to-machine integration might use:</p>
+<pre><code class="hljs language-text">Service
+ ↓
+API Credentials
+ ↓
+Request Signing
+ ↓
+IP Allowlist
+ ↓
+API
+</code></pre><p>So rather than thinking:</p>
+<blockquote>
+<p>&quot;Should I use JWT, sessions, or request signing?&quot;</p>
+</blockquote>
+<p>I think the better question is:</p>
+<blockquote>
+<p><strong>Who is calling the system, what are they trying to access, what could
+go wrong if the credential is stolen, and what security properties does the
+application actually need?</strong></p>
+</blockquote>
+</div>
+        <footer class="back-to-top">
+          <a href="#" class="back-to-top-link">← Back to Top</a>
+        </footer>
+      </article>
+    </div>
+  
+</body>
+</html>
