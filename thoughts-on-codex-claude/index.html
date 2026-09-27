@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Thoughts on Codex and Claude</title>
+  <meta name="description" content="my thoughts on Codex and Claude models">
+  <meta property="og:title" content="My Thoughts on Codex and Claude">
+  <meta property="og:description" content="my thoughts on Codex and Claude models">
+  <meta property="og:url" content="https://jfullstackdev.github.io/blog/thoughts-on-codex-claude/">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://jfullstackdev.github.io/blog/images/og-default.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://jfullstackdev.github.io/blog/images/og-default.png">
+  <meta name="twitter:title" content="My Thoughts on Codex and Claude">
+  <meta name="twitter:description" content="my thoughts on Codex and Claude models">
+  <link rel="stylesheet" href="/blog/style.css">
+  <link rel="stylesheet" href="/blog/hljs.css">
+  <script>
+    // TOC anchor links — scroll without touching history
+    document.addEventListener('click', function(e) {
+      var link = e.target.closest('[href^="#"]');
+      if (link) {
+        e.preventDefault();
+        var target = document.getElementById(link.getAttribute('href').slice(1));
+        if (target) { target.scrollIntoView(); }
+      }
+      var topLink = e.target.closest('.back-to-top-link');
+      if (topLink) {
+        e.preventDefault();
+        window.scrollTo(0, 0);
+      }
+    });
+  </script>
+</head>
+<body>
+  
+    <nav class="top-nav"><a href="/blog/" id="back-link">← Back</a></nav>
+    <script>
+      (function() {
+        var a = document.getElementById('back-link');
+        a.addEventListener('click', function(e) {
+          if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey) return;
+          if (document.referrer && document.referrer.includes(window.location.hostname)) {
+            e.preventDefault();
+            history.back();
+          }
+        });
+      })();
+    </script>
+    <div class="layout">
+      <aside class="toc">
+        <details class="toc-mobile">
+          <summary>Contents</summary>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#personal-projects-with-ai">Personal Projects with AI</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#what-ai-coding-agents-did-best">What AI Coding Agents Did Best</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#observations-and-limitations-ive-encountered">Observations and Limitations I've Encountered</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#comparison-with-earlier-technologies">Comparison with Earlier Technologies</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#humans-have-the-final-say">Humans Have the Final Say</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#what-this-means-for-us">What This Means for Us</a>
+    </li>
+  </ul></nav>
+        </details>
+        <div class="toc-desktop">
+          <h2>Contents</h2>
+          <nav><ul>
+    <li class="lvl-2">
+      <a href="#personal-projects-with-ai">Personal Projects with AI</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#what-ai-coding-agents-did-best">What AI Coding Agents Did Best</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#observations-and-limitations-ive-encountered">Observations and Limitations I've Encountered</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#comparison-with-earlier-technologies">Comparison with Earlier Technologies</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#humans-have-the-final-say">Humans Have the Final Say</a>
+    </li>
+  
+    <li class="lvl-2">
+      <a href="#what-this-means-for-us">What This Means for Us</a>
+    </li>
+  </ul></nav>
+        </div>
+      </aside>
+      <article class="content">
+        <header>
+          <h1>My Thoughts on Codex and Claude</h1>
+          <time>September 27, 2026</time>
+        </header>
+        <div><p>This is another article of mine on AI, this time on frontier models, 
+including the older GPT-5.5 in Codex, as well as GPT-5.6 Luna, Terra, 
+Sol, the latest GPT-6 Astra, and Claude Opus 5 and Fable 5.</p>
+<p>Compared with what I last observed with Sonnet 4.5, I feel these models
+have improved a lot. We are seeing more and more autonomy, with models
+executing tasks well.</p>
+<p>Also, this does not include the newer Fable 5.1 or even Mythos,
+as I still haven&#39;t had a chance to use them in actual projects.</p>
+<p>From what I&#39;m seeing online, they still seem to fall short of AGI
+expectations, though some claim they are early forms of AGI. Several weeks
+have passed without much hype, so I wonder whether these are just another
+round of frontier models that consume lots of tokens for a moderate
+benefit.</p>
+<p>These are my observations, though I&#39;m not doing a statistical evaluation. 
+This is not meant to be a benchmark or a definitive comparison of these models. 
+It is mostly a record of my experience using them on real projects, along with 
+some thoughts on what those experiences might mean for developers 
+and for AI more broadly.</p>
+<h2 id="personal-projects-with-ai">Personal Projects with AI</h2>
+<p>I worked on around three personal projects using these frontier models, and
+just like when Sonnet first arrived, I never really wrote even a single
+line of code.</p>
+<p>Still, I instruct each model as a dev, using specific rather than vague
+prompts, knowing exactly what I expect the AI to do. Sometimes I let it
+brainstorm and try its suggestions, but I&#39;m still hands-on.</p>
+<p>That&#39;s still a dev doing the work, not vibe coding or simply prompting it
+to create a project. We still know what to build and how to build it.</p>
+<p>It is good not only at coding but also at debugging and checking the health
+of a running service, something we didn&#39;t do much before. Since we rely on
+health checks, this is really useful.</p>
+<p>It still doesn&#39;t write perfect code. During manual testing of my Trade
+Helper app, I still found bugs in the code it produced, so it&#39;s still up to
+me to understand exactly what&#39;s happening.</p>
+<p>It also assumes too much or too little about things, since it is still not
+at a human level. From time to time, I need to correct those assumptions.
+Otherwise, it can easily modify what&#39;s already working and still be very
+confident in doing so.</p>
+<p>So, imagine this in real production. Mine is a moderate-sized project, or
+even a small one, and it still introduced bugs, not just once but many
+times. It&#39;s still dangerous if the dev does not know exactly what it is
+doing.</p>
+<p>Also, I realized that even though it is mostly written by AI, there is 
+still so much to be done just to make it pass the initial publishing 
+stage. And this is just a personal project.</p>
+<p>I even documented the known limitations and the things I plan to address 
+in the future, but I cannot trust any frontier model to handle all 
+of them correctly at once.</p>
+<h2 id="what-ai-coding-agents-did-best">What AI Coding Agents Did Best</h2>
+<ol>
+<li><p><strong>Scripts.</strong> A human could do this before, but would need to test each
+script to make sure it works. With so many scripts to run and check, a
+human would simply slow down. AI still needs to test its own scripts,
+but it can run those checks much faster.</p>
+</li>
+<li><p><strong>Chains of events.</strong></p>
+<ul>
+<li>Whether reviewing a PR or investigating a bug, it can quickly carry
+out a series of steps that a human would have to run and check
+manually, using logs from each code path.</li>
+<li>In a big codebase, this is beneficial because those checks can be very
+hard for humans, while AI can work through them to reach its findings.</li>
+</ul>
+</li>
+<li><p><strong>Mechanical tasks.</strong> It&#39;s very good at mechanical tasks, such as
+resolving complicated merge conflicts, that would otherwise
+be time-consuming for humans. It also helps with formatting and syntax
+before linters and formatters even run.</p>
+</li>
+</ol>
+<h2 id="observations-and-limitations-i-and-39ve-encountered">Observations and Limitations I&#39;ve Encountered</h2>
+<p>The greatest limitation, as others have also observed, is how many tokens
+these models consume. We know that gets costly, even for companies.</p>
+<p>I personally tried ChatGPT Plus after using Go. At first, I wasn&#39;t
+interested in trying these models on Go, but eventually I gave them a try.</p>
+<p>With Terra Medium as the default, my Go allowance would barely last a few
+prompts. Even for a simple PR review or medium tasks, it would not last
+half a day.</p>
+<p>I thought it was really unusable, but then I tried Luna Medium, or 
+sometimes High, and my Go allowance lasted longer. A single medium task,
+like reviewing a moderately sized PR, consumed only 1% of my monthly allowance.</p>
+<p>So, for now, this approach still works: use higher reasoning settings and
+top-level models for planning, debugging, and major tasks. Have them create
+a detailed plan and task lists, then have Luna Medium execute the plan.</p>
+<p>Also, do not underestimate Luna Medium. Others said it is as good as Sonnet
+4.5 and can even match Opus in some ways. From my own use, I feel that&#39;s
+really the case.</p>
+<p>Without this technique, I don&#39;t think even my Plus subscription would last through
+a day of coding. It&#39;s still costly when you&#39;re paying for it yourself.</p>
+<p>Even big companies have felt the cost pressure. Uber reportedly burned through 
+its annual AI budget by April, while Microsoft reportedly canceled most of 
+its Claude Code licenses, partly over costs, and shifted developers toward 
+GitHub Copilot CLI. I call it an &quot;AI Budget Cut.&quot; 😅</p>
+<h2 id="comparison-with-earlier-technologies">Comparison with Earlier Technologies</h2>
+<p>But to be fair, AI is not the first technology to need expensive
+infrastructure before the benefits become clear. We saw this with
+electricity, telecom networks, and cloud computing. Businesses also need
+time to adjust how they work. So maybe AI is still in that stage, where the
+spending comes first and the bigger benefits come later.</p>
+<p>AI is also unusually costly because its infrastructure can become outdated
+quickly as models and hardware improve. Companies are spending heavily on
+specialized chips, data centres, electricity, and model training, while
+newer generations of hardware can require further investment before the
+previous spending has fully paid off. Earlier technologies also had
+continuing costs, but the rapid pace of AI development may make it harder
+for companies to recover these investments before another upgrade cycle
+begins.</p>
+<p>AI could follow a similar path. Better chips, more efficient models, and
+wider adoption may eventually allow companies to get more value from the
+same amount of spending. However, this is not guaranteed. AI may prove
+more problematic if the cost of training and running advanced models
+continues to rise, or if businesses do not gain enough productivity or
+revenue to justify those costs. In that case, AI could still become an
+important technology, while many of the companies investing heavily in it
+struggle to earn back what they spent. Hence, the possibility of the AI
+bubble popping remains.</p>
+<h2 id="humans-have-the-final-say">Humans Have the Final Say</h2>
+<p>Another technique I use is to have different models scan the same project,
+or specific modules if the project is big, and compare their findings. They
+don&#39;t always agree with each other. Even the same model can produce
+different findings in different sessions.</p>
+<p>This is a big issue: how could AI be fully automated if its findings vary
+and even the severity ratings are inconsistent?</p>
+<p>In these scans/reviews, I found Opus 5 very verbose, Fable more balanced, and
+Terra more conservative. Sol, I feel, is a step up from Terra, but only for
+larger or more demanding tasks.</p>
+<p>But Terra being conservative might not always be good. That&#39;s why I use
+different models: the differences emerge, they debate the findings, and I
+finally settle on something.</p>
+<p>For example, there was a recurring IP whitelisting error with my Trade
+Helper app connecting to Coins.ph: IPv4 connections failed, while IPv6
+worked. Despite repeated investigation and brainstorming, Terra did not
+suggest anything to remedy it. Then Opus 5 suggested pinning it to IPv6,
+and the recurring error disappeared.</p>
+<p>Also, GPT-5.5 introduced a major bug in the Trade Helper app: the code 
+it generated placed new exit orders for a coin when reconciliation 
+failed. That’s kinda scary.</p>
+<p>But as mentioned, an aggressive Opus 5 can be good at times when you need
+it. It flags many issues that Terra and GPT-5.5 didn&#39;t raise.</p>
+<p>I used GPT-6 Astra five times in different sessions to review the same app, 
+my Trade Helper. Even though it was the same Astra, some findings were really 
+different. It did not catch some issues in the first scan, raised new 
+findings in later scans, and sometimes contradicted things the 
+same Astra had raised earlier.</p>
+<p>Running these five reviews used about 50% of my 5-hour limit and around 
+10% of my weekly limit on my Plus subscription.</p>
+<p>Also, I have them challenge each other&#39;s findings by pasting one model&#39;s
+findings into another&#39;s session.</p>
+<p>They eventually agree on some points, but the dev still has to settle 
+the remaining disagreements. It still comes back to how good you are as a dev.</p>
+<h2 id="what-this-means-for-us">What This Means for Us</h2>
+<p>We might be wondering whether coding is getting closer to its end, but a
+lot is happening right now.</p>
+<p>Anthropic’s CEO has called for slower AI development so safety measures and
+oversight can keep pace with advancing capabilities. Elon Musk and OpenAI
+CEO Sam Altman expressed support. This makes me wonder whether a similar
+problem could emerge in dev workflows: AI produces code so quickly that
+developers struggle to review and validate it.</p>
+<p>Another possibility, though this is more speculative, is that AI is reaching
+a point where further improvements become much harder without also making
+the systems more dangerous.</p>
+<p>If that happens, AI could become too costly for the benefits it delivers. It
+may fail to deliver the expected agentic output and economic impact, while
+investors become less willing to keep funding the enormous costs involved.</p>
+<p>There is also another gap forming. New devs may find it harder to enter the
+field while senior devs remain relevant. But what happens when there are not
+enough newcomers gaining the experience needed to become the mid-level and
+senior devs of the future?</p>
+<p>Personally, I still don&#39;t feel these models are on par with human reasoning.
+They can do many things they are well trained for, but I still don&#39;t see them
+reasoning at a human level. So AGI might remain a dream unless something big
+happens, such as a breakthrough fundamentally different from the way LLMs
+work now.</p>
+<p>Even if progress stalls, AI would not simply disappear. It could still become
+the main tool for devs, possibly allowing fewer devs to do the same amount of
+work. But that would still be different from the fully autonomous AI being
+promised.</p>
+<p>What remains uncertain is the role it will play, and I feel this could be a
+turning point. We might see its direction more clearly in several months,
+though my estimate is that it could take up to three years.</p>
+<p>So, as I said in my older articles, I still think we&#39;re far from AGI.</p>
+</div>
+        <footer class="back-to-top">
+          <a href="#" class="back-to-top-link">← Back to Top</a>
+        </footer>
+      </article>
+    </div>
+  
+</body>
+</html>
